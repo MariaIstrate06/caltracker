@@ -1,0 +1,462 @@
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  color-scheme: dark;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #07120f;
+  color: #e7f5d4;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: radial-gradient(circle at top, rgba(58, 191, 36, 0.16), transparent 35%),
+    linear-gradient(180deg, #081610 0%, #10221a 100%);
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+.container {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 28px 24px 40px;
+}
+
+header {
+  padding: 24px 0 22px;
+}
+
+header h1 {
+  margin: 0;
+  font-size: clamp(2.4rem, 4vw, 3.6rem);
+  letter-spacing: -0.04em;
+  color: #f4ffe9;
+}
+
+header p {
+  margin: 14px 0 0;
+  max-width: 48rem;
+  color: #b9dca9;
+  line-height: 1.75;
+}
+
+.card {
+  background: rgba(16, 32, 24, 0.94);
+  border: 1px solid rgba(58, 191, 36, 0.18);
+  border-radius: 28px;
+  padding: 28px;
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.22);
+  margin-bottom: 28px;
+}
+
+.summary-top,
+.section-summary,
+.buttons-row,
+.history-actions,
+.meal-totals {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.summary label,
+.meal-builder label,
+.custom-fields label,
+.day-card strong,
+.history-item summary strong {
+  color: #e7f5d4;
+}
+
+.summary input,
+.meal-builder input,
+.meal-builder select,
+.day-card,
+.metric,
+.ingredient-row,
+.ingredient-detail,
+.details-body {
+  color: #e7f5d4;
+}
+
+summary,
+.day-card span,
+.meal-meta,
+.current-values small,
+.metric span,
+.history p,
+.progress-row small {
+  color: #b9dca9;
+}
+
+.summary input,
+.meal-builder input,
+.meal-builder select {
+  width: 100%;
+  border: 1px solid rgba(58, 191, 36, 0.26);
+  border-radius: 14px;
+  padding: 14px 16px;
+  background: rgba(8, 22, 16, 0.88);
+  color: #e7f5d4;
+}
+
+.summary-grid,
+.day-summary-grid {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  margin-top: 22px;
+}
+
+.metric,
+.day-card {
+  background: rgba(11, 28, 19, 0.95);
+  border: 1px solid rgba(58, 191, 36, 0.16);
+  border-radius: 22px;
+  padding: 22px;
+}
+
+.metric strong,
+.day-card strong {
+  display: block;
+  font-size: 1.8rem;
+  margin-bottom: 8px;
+}
+
+.metric span,
+.day-card span,
+.current-values small {
+  color: #a8cfa0;
+}
+
+.status {
+  display: inline-flex;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 14px 18px;
+  border-radius: 999px;
+  font-weight: 700;
+  margin-top: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.status.good {
+  color: #c6f2bb;
+  background: rgba(51, 110, 56, 0.3);
+  border-color: rgba(58, 191, 36, 0.3);
+}
+
+.status.over {
+  color: #ffb4b4;
+  background: rgba(110, 40, 40, 0.28);
+  border-color: rgba(255, 92, 92, 0.28);
+}
+
+.meal-builder summary,
+.history summary,
+.meal-details summary {
+  list-style: none;
+  cursor: pointer;
+}
+
+.meal-builder summary::-webkit-details-marker,
+.history summary::-webkit-details-marker,
+.meal-details summary::-webkit-details-marker {
+  display: none;
+}
+
+.meal-builder .section-summary,
+.history .section-summary {
+  width: 100%;
+}
+
+.meal-builder summary,
+.history summary {
+  padding: 0;
+}
+
+.meal-builder .detail-body,
+.history .detail-body {
+  margin-top: 22px;
+}
+
+.meal-builder h2,
+.history h2 {
+  margin: 0;
+}
+
+.meal-builder p,
+.history p {
+  margin: 8px 0 0;
+}
+
+.meal-total-display {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(140px, 1fr));
+  gap: 14px;
+  margin: 24px 0 0;
+}
+
+.meal-total-display div {
+  background: rgba(58, 191, 36, 0.12);
+  border: 1px solid rgba(58, 191, 36, 0.22);
+  border-radius: 18px;
+  padding: 16px;
+}
+
+.meal-total-display strong {
+  display: block;
+  font-size: 1.6rem;
+  margin-bottom: 6px;
+}
+
+.meal-total-display span {
+  color: #a8cfa0;
+}
+
+.ingredient-table {
+  display: grid;
+  gap: 16px;
+  margin-top: 22px;
+}
+
+.ingredient-row {
+  display: grid;
+  grid-template-columns: 150px 1.6fr 100px 140px auto;
+  gap: 16px;
+  align-items: center;
+}
+
+.header-row {
+  font-size: 0.95rem;
+  color: #9ac79d;
+  font-weight: 700;
+}
+
+.header-row span:nth-child(3),
+.header-row span:nth-child(4) {
+  padding-left: 8px;
+}
+
+.ingredient-select {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ingredient-select select {
+  width: 100%;
+}
+
+.custom-fields {
+  display: grid;
+  gap: 18px;
+  margin: 20px 0 0;
+  padding: 20px;
+  border-radius: 20px;
+  background: rgba(10, 24, 14, 0.88);
+}
+
+.field-inline {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 1fr 1fr;
+}
+
+.buttons-row {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+
+button {
+  border: 1px solid transparent;
+  border-radius: 16px;
+  padding: 0 22px;
+  min-height: 48px;
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+}
+
+button.primary {
+  background: #3abf24;
+  color: #07120f;
+  box-shadow: 0 18px 40px rgba(58, 191, 36, 0.24);
+}
+
+button:not(.primary) {
+  background: rgba(255, 255, 255, 0.06);
+  color: #d5f2b8;
+  border-color: rgba(58, 191, 36, 0.25);
+}
+
+button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.history-actions button {
+  min-width: 160px;
+}
+
+.history-item {
+  border: 1px solid rgba(58, 191, 36, 0.12);
+  border-radius: 22px;
+  padding: 20px;
+  display: grid;
+  gap: 16px;
+  background: rgba(9, 22, 16, 0.88);
+}
+
+.history-item details {
+  border-radius: 20px;
+}
+
+.meal-details summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 14px;
+  border-radius: 18px;
+  background: rgba(20, 44, 30, 0.9);
+}
+
+.meal-details summary:hover {
+  background: rgba(58, 191, 36, 0.12);
+}
+
+.history-item summary div {
+  display: grid;
+  gap: 6px;
+}
+
+.history-item summary strong {
+  margin: 0;
+}
+
+.history-item summary small {
+  color: #a8cfa0;
+}
+
+.meal-meta {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  color: #d9f3b4;
+  font-weight: 700;
+}
+
+.meal-ingredients {
+  display: grid;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.ingredient-detail {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 16px;
+  background: rgba(13, 29, 18, 0.96);
+  border-radius: 18px;
+}
+
+.ingredient-detail strong {
+  display: block;
+}
+
+.ingredient-detail span {
+  display: block;
+  color: #94ba88;
+}
+
+.empty-state {
+  padding: 28px;
+  background: rgba(9, 22, 16, 0.8);
+  border: 1px dashed rgba(58, 191, 36, 0.24);
+  border-radius: 18px;
+  color: #a5c89b;
+}
+
+.remove-row {
+  background: rgba(255, 77, 77, 0.12);
+  color: #ffb4b4;
+  border-color: rgba(255, 77, 77, 0.18);
+}
+
+.progress-section {
+  display: grid;
+  gap: 16px;
+  margin-top: 22px;
+}
+
+.progress-row {
+  display: grid;
+  gap: 10px;
+}
+
+.progress-track {
+  width: 100%;
+  height: 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  border-radius: 999px;
+}
+
+.progress-bar.calories {
+  background: #3abf24;
+}
+
+.progress-bar.protein {
+  background: #a0eb5d;
+}
+
+.details summary {
+  padding: 0;
+}
+
+.day-card {
+  display: grid;
+  gap: 8px;
+}
+
+@media (max-width: 900px) {
+  .ingredient-row {
+    grid-template-columns: 1fr;
+  }
+
+  .field-inline {
+    grid-template-columns: 1fr;
+  }
+
+  .meal-builder .section-summary,
+  .history .section-summary,
+  .buttons-row,
+  .summary-top {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .day-summary-grid {
+    grid-template-columns: 1fr;
+  }
+}

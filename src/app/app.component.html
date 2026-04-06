@@ -1,0 +1,233 @@
+<div class="container">
+  <header>
+    <h1 style="color: #3abf24;">Daily Calorie Tracker</h1>
+    <p style="color: black;">Sal, Maria. Ce ai păpat bun?</p>
+  </header>
+
+  <section class="card summary">
+    <div class="summary-top">
+      <div>
+        <label for="targetCalories">Daily calorie goal</label>
+        <input
+          id="targetCalories"
+          type="number"
+          min="1"
+          [(ngModel)]="targetCalories"
+          (ngModelChange)="saveState()"
+        />
+      </div>
+      <div class="summary-pill">Today: {{ todayMealCount }} meals</div>
+    </div>
+
+    <div class="summary-grid">
+      <div class="metric">
+        <strong>{{ targetCalories }}</strong>
+        <span>Target</span>
+      </div>
+      <div class="metric">
+        <strong>{{ mealTodayCalories }}</strong>
+        <span>Today calories</span>
+      </div>
+      <div class="metric">
+        <strong>{{ mealTodayProtein | number:'1.0-1' }}</strong>
+        <span>Today protein</span>
+      </div>
+    </div>
+
+    <div class="progress-section">
+      <div class="progress-row">
+        <span>Calories</span>
+        <div class="progress-track">
+          <div class="progress-bar calories" [style.width.%]="todayCaloriesPercent"></div>
+        </div>
+        <small>{{ mealTodayCalories }} / {{ targetCalories }} cal</small>
+      </div>
+      <div class="progress-row">
+        <span>Protein</span>
+        <div class="progress-track">
+          <div class="progress-bar protein" [style.width.%]="todayProteinPercent"></div>
+        </div>
+        <small>{{ mealTodayProtein | number:'1.0-1' }} g</small>
+      </div>
+    </div>
+
+    <div class="status" [class.good]="trackingStatus === 'good'" [class.over]="trackingStatus === 'over'">
+      {{ statusText }}
+    </div>
+
+    <div class="summary-actions">
+      <button type="button" class="primary" (click)="openNewMeal()" *ngIf="!showMealBuilder">Start new meal</button>
+    </div>
+  </section>
+
+  <details class="card meal-builder" *ngIf="showMealBuilder" open>
+    <summary>
+      <div class="section-summary">
+        <div>
+          <h2>Build a meal</h2>
+          <p>Pick ingredients, edit calories, protein, and weight, then save the meal to history.</p>
+        </div>
+        <div class="meal-totals">
+          <div>
+            <strong>{{ currentMealCalories }}</strong>
+            <span>meal calories</span>
+          </div>
+          <div>
+            <strong>{{ currentMealProtein | number:'1.0-1' }}</strong>
+            <span>meal protein</span>
+          </div>
+        </div>
+      </div>
+    </summary>
+
+    <div class="detail-body">
+      <label for="mealName">Meal name</label>
+      <input
+        id="mealName"
+        type="text"
+        placeholder="Dinner, Lunch, Snack..."
+        [(ngModel)]="currentMealName"
+        autocomplete="off"
+      />
+
+      <div class="meal-total-display">
+        <div>
+          <strong>{{ currentMealCalories }}</strong>
+          <span>Current meal calories</span>
+        </div>
+        <div>
+          <strong>{{ currentMealProtein | number:'1.0-1' }}</strong>
+          <span>Current meal protein</span>
+        </div>
+      </div>
+
+      <div class="ingredient-table">
+        <div class="ingredient-row header-row">
+          <span>Category</span>
+          <span>Ingredient</span>
+          <span>Weight (g)</span>
+          <span>Calories / 100g</span>
+          <span></span>
+        </div>
+
+        <div class="ingredient-row" *ngFor="let ingredient of currentIngredients">
+          <select [(ngModel)]="ingredient.category" (ngModelChange)="onCategoryChange(ingredient, $event)">
+            <option *ngFor="let category of categories" [value]="category">{{ category }}</option>
+          </select>
+
+          <div class="ingredient-select">
+            <select [(ngModel)]="ingredient.templateId" (ngModelChange)="onIngredientChange(ingredient, $event)">
+              <option [ngValue]="null">Select ingredient</option>
+              <optgroup label="Defaults">
+                <option
+                  *ngFor="let template of allTemplates.filter((template) => template.category === ingredient.category && !template.custom)"
+                  [value]="template.id"
+                >
+                  {{ template.name }}
+                </option>
+              </optgroup>
+              <optgroup label="Custom ingredients" *ngIf="customIngredients.length > 0">
+                <option
+                  *ngFor="let template of customIngredients.filter((template) => template.category === ingredient.category)"
+                  [value]="template.id"
+                >
+                  {{ template.name }}
+                </option>
+              </optgroup>
+              <option value="custom">Custom ingredient</option>
+            </select>
+          </div>
+
+          <input
+            type="number"
+            min="1"
+            [(ngModel)]="ingredient.weight"
+            (ngModelChange)="saveState()"
+          />
+
+          <input
+            type="number"
+            min="0"
+            [(ngModel)]="ingredient.caloriesPer100g"
+            (ngModelChange)="saveState()"
+          />
+
+          <button type="button" class="remove-row" (click)="removeIngredientRow(ingredient.id)">Remove</button>
+        </div>
+      </div>
+
+      <div class="buttons-row">
+        <button type="button" (click)="addIngredientRow()">Add ingredient to meal</button>
+        <button type="button" class="primary" (click)="saveMeal()" [disabled]="!currentMealName.trim()">Save meal to history</button>
+        <button type="button" (click)="cancelMeal()">Cancel</button>
+      </div>
+
+      <div class="custom-fields" *ngFor="let ingredient of currentIngredients" [hidden]="!ingredient.custom">
+        <div class="field-inline">
+          <label>Ingredient name</label>
+          <input type="text" [(ngModel)]="ingredient.name" (ngModelChange)="saveState()" placeholder="Custom ingredient name" />
+        </div>
+        <div class="field-inline">
+          <label>Protein / 100g</label>
+          <input type="number" min="0" [(ngModel)]="ingredient.proteinPer100g" (ngModelChange)="saveState()" />
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <details class="card history" open>
+    <summary>
+      <div class="section-summary">
+        <div>
+          <h2>Meal history</h2>
+          <p>See your last two days of calories and protein without visual clutter.</p>
+        </div>
+        <div class="history-actions">
+          <button type="button" (click)="exportHistory()">Export history</button>
+          <button type="button" (click)="fileInput.click()">Import history</button>
+          <input type="file" hidden #fileInput accept="application/json" (change)="handleImportFile($event)" />
+        </div>
+      </div>
+    </summary>
+
+    <div class="detail-body">
+      <div class="day-summary-grid">
+        <div class="day-card" *ngFor="let day of recentDaySummaries">
+          <strong>{{ day.label }}</strong>
+          <span>{{ day.calories }} cal</span>
+          <span>{{ day.protein | number:'1.0-1' }} g protein</span>
+        </div>
+      </div>
+
+      <div *ngIf="mealHistory.length === 0" class="empty-state">
+        No saved meals yet. Create a meal and save it to build your history.
+      </div>
+
+      <div *ngFor="let meal of mealHistory" class="history-item">
+        <details class="meal-details">
+          <summary>
+            <div>
+              <strong>{{ meal.name }}</strong>
+              <small>{{ meal.createdAt | date: 'medium' }}</small>
+            </div>
+            <div class="meal-meta">
+              <span>{{ meal.totalCalories }} cal</span>
+              <span>{{ meal.totalProtein | number:'1.0-1' }} g protein</span>
+            </div>
+          </summary>
+          <div class="meal-ingredients">
+            <div *ngFor="let ingredient of meal.ingredients" class="ingredient-detail">
+              <div>
+                <strong>{{ ingredient.name }}</strong>
+                <span>{{ ingredient.category }}</span>
+              </div>
+              <div>
+                {{ ingredient.weight }} g · {{ ingredientTotalCalories(ingredient) }} cal · {{ ingredientTotalProtein(ingredient) | number:'1.0-1' }} g
+              </div>
+            </div>
+          </div>
+        </details>
+      </div>
+    </div>
+  </details>
+</div>
