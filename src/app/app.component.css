@@ -6,7 +6,7 @@
   color-scheme: dark;
   font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   background: #07120f;
-  color: #e7f5d4;
+  color: #d9f3b4;
 }
 
 body {
@@ -30,6 +30,36 @@ select {
 
 header {
   padding: 24px 0 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+.header-left {
+  min-width: 320px;
+}
+
+.header-right {
+  text-align: right;
+  min-width: 240px;
+}
+
+.header-date,
+.header-countdown {
+  margin: 10px 0 0;
+  line-height: 1.4;
+}
+
+.header-date {
+  color: #d9f3b4;
+  font-weight: 700;
+}
+
+.header-countdown {
+  color: #a0eb5d;
+  font-weight: 600;
 }
 
 header h1 {
@@ -72,7 +102,7 @@ header p {
 .custom-fields label,
 .day-card strong,
 .history-item summary strong {
-  color: #e7f5d4;
+  color: #d9f3b4;
 }
 
 .summary input,
@@ -83,7 +113,7 @@ header p {
 .ingredient-row,
 .ingredient-detail,
 .details-body {
-  color: #e7f5d4;
+  color: #d9f3b4;
 }
 
 summary,
@@ -104,7 +134,7 @@ summary,
   border-radius: 14px;
   padding: 14px 16px;
   background: rgba(8, 22, 16, 0.88);
-  color: #e7f5d4;
+  color: #d9f3b4;
 }
 
 .summary-grid,
@@ -159,6 +189,38 @@ summary,
   border-color: rgba(255, 92, 92, 0.28);
 }
 
+.fun-facts {
+  display: flex;
+  gap: 16px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.glowing-square {
+  background: linear-gradient(135deg, rgba(58, 191, 36, 0.2), rgba(58, 191, 36, 0.1));
+  border: 2px solid rgba(58, 191, 36, 0.5);
+  border-radius: 16px;
+  padding: 16px;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(58, 191, 36, 0.3);
+  min-width: 120px;
+}
+
+.glowing-square .icon {
+  font-size: 2rem;
+  margin-bottom: 8px;
+}
+
+.glowing-square .text {
+  font-weight: bold;
+  color: #d9f3b4;
+}
+
+.glowing-square .subtext {
+  font-size: 0.9rem;
+  color: #b9dca9;
+}
+
 .meal-builder summary,
 .history summary,
 .meal-details summary {
@@ -187,14 +249,220 @@ summary,
   margin-top: 22px;
 }
 
+.existing-meal-selector .detail-body {
+  margin-top: 22px;
+}
+
+.existing-meal-item {
+  background: rgba(11, 28, 19, 0.95);
+  border: 1px solid rgba(58, 191, 36, 0.16);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.existing-meal-item:hover {
+  background: rgba(11, 28, 19, 0.8);
+}
+
+.existing-meal-item strong {
+  display: block;
+  color: #d9f3b4;
+}
+
+.existing-meal-item small {
+  color: #b9dca9;
+  margin-top: 4px;
+}
+
+.existing-meal-item span {
+  color: #a8cfa0;
+  margin-top: 8px;
+  display: block;
+}
+
+.existing-meal-selector .section-summary h2,
+.existing-meal-selector .section-summary p {
+  color: #ffffff;
+}
+
+.history-item {
+  border: 1px solid rgba(58, 191, 36, 0.18);
+  border-radius: 18px;
+  margin-bottom: 14px;
+  overflow: hidden;
+  background: rgba(11, 28, 19, 0.95);
+}
+
+.history-item summary {
+  list-style: none;
+  padding: 18px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  position: relative;
+}
+
+.history-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.history-item summary::before {
+  content: '▸';
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%) rotate(0deg);
+  transition: transform 0.2s ease;
+}
+
+.history-item[open] summary::before {
+  transform: translateY(-50%) rotate(90deg);
+}
+
+.history-item summary div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.history-item summary strong {
+  margin: 0;
+  color: #d9f3b4;
+  font-size: 1.65rem;
+
+}
+
+.history-item summary small {
+  color: #a8cfa0;
+}
+
+.meal-meta {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+}
+
+.meal-meta span {
+  color: #d9f3b4;
+}
+
+.meal-ingredients {
+  padding: 0 20px 18px;
+}
+
 .meal-builder h2,
 .history h2 {
   margin: 0;
+  color: #3abf24;
+}
+
+.history h3 {
+  margin: 40px 0 20px 0;
+  color: #d9f3b4;
+  font-size: 1.8rem;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(58, 191, 36, 0.3);
+  padding-bottom: 8px;
 }
 
 .meal-builder p,
 .history p {
   margin: 8px 0 0;
+}
+
+.meal-summary strong {
+  color: #d9f3b4;
+  font-size: 1.1rem;
+}
+
+.drink-selector-card .section-summary h2 {
+  color: #3abf24;
+}
+
+.drink-selector {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.drink-option {
+  background: rgba(58, 191, 36, 0.1);
+  border: 1px solid rgba(58, 191, 36, 0.3);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.drink-option-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.drink-option-name {
+  font-weight: 700;
+  color: #d9f3b4;
+  line-height: 1.2;
+}
+
+.drink-option-cals {
+  color: #a0eb5d;
+  font-size: 0.95rem;
+}
+
+.drink-counter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.drink-counter-label {
+  color: #b9dca9;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.drink-counter-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.drink-counter button {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 6px;
+  background: rgba(58, 191, 36, 0.2);
+  color: #3abf24;
+  cursor: pointer;
+}
+
+.drink-counter-value {
+  min-width: 28px;
+  text-align: center;
+  font-weight: 700;
+  color: #d9f3b4;
+}
+
+.drink-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.drink-actions button {
+  min-width: 140px;
 }
 
 .meal-total-display {
@@ -277,6 +545,12 @@ summary,
   margin-top: 24px;
 }
 
+.summary-actions {
+  display: flex;
+  gap: 0.5em;
+  flex-wrap: wrap;
+}
+
 button {
   border: 1px solid transparent;
   border-radius: 16px;
@@ -344,8 +618,14 @@ button:disabled {
   gap: 6px;
 }
 
+.history-item summary {
+  color: #d9f3b4;
+}
+
 .history-item summary strong {
   margin: 0;
+  color: #d9f3b4;
+  font-size: 1rem;
 }
 
 .history-item summary small {

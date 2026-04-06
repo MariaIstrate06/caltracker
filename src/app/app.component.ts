@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -41,6 +41,12 @@ interface MealEntry {
   createdAt: string;
 }
 
+interface DrinkOption {
+  id: string;
+  name: string;
+  calories: number;
+}
+
 interface CalTrackState {
   targetCalories: number;
   mealHistory: MealEntry[];
@@ -54,19 +60,151 @@ interface CalTrackState {
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })
-export class AppComponent {
+export class AppComponent implements OnDestroy {
   title = 'CalTrack';
   targetCalories = 2000;
+  targetProtein = 133.5;
   currentMealName = '';
   currentIngredients: MealIngredient[] = [];
   mealHistory: MealEntry[] = [];
   customIngredients: IngredientTemplate[] = [];
   categories: IngredientCategory[] = ['Meat', 'Carb', 'Veggie', 'Other'];
   showMealBuilder = false;
+  showExistingMealSelector = false;
+  showDrinkSelector = false;
+  drinkCounts: Record<string, number> = {};
+  bucharestDateTime = '';
+  bucharestCountdown = '';
+  private bucharestClockInterval?: number;
+  availableDrinks: DrinkOption[] = [
+    { id: 'pepsi-twist-05', name: 'Pepsi Twist (0.5L)', calories: 210 },
+    { id: 'pepsi-twist-033', name: 'Pepsi Twist (0.33L)', calories: 140 },
+    { id: 'coke-classic-033', name: 'Coca-Cola Classic (0.33L)', calories: 140 },
+    { id: 'coke-zero', name: 'Coca-Cola Zero Sugar', calories: 0 },
+    { id: 'milk-coffee', name: 'Milk Coffee', calories: 70 },
+    { id: 'espresso-capsule', name: 'Espresso (capsule)', calories: 2 },
+    { id: 'espresso-tonic', name: 'Espresso tonic', calories: 130 },
+    { id: 'beer-05', name: 'Beer (0.5L)', calories: 250 },
+    { id: 'glass-wine-150', name: 'Glass of wine (150 ml)', calories: 130 },
+    { id: 'gin-tonic', name: 'Gin & Tonic', calories: 220 },
+  ];
+
+  get todayDateDisplay() {
+    const now = new Date();
+    const day = now.getDate();
+    const month = now.toLocaleString('en-US', { month: 'long' });
+    const suffix = day === 1 || day === 21 || day === 31 ? 'st' : day === 2 || day === 22 ? 'nd' : day === 3 || day === 23 ? 'rd' : 'th';
+    return `${day}${suffix} of ${month}`;
+  }
+
+  private updateBucharestClock() {
+    const now = new Date();
+    const bucharestParts = this.getBucharestParts(now);
+    this.bucharestDateTime = `${bucharestParts.weekday}, ${bucharestParts.day} ${bucharestParts.month} ${bucharestParts.year} · ${this.pad(bucharestParts.hour)}:${this.pad(bucharestParts.minute)}:${this.pad(bucharestParts.second)}`;
+    const countdownMs = this.getMillisecondsUntilNextBucharestMidnight(now);
+    this.bucharestCountdown = this.formatCountdown(countdownMs);
+  }
+
+  private getBucharestParts(date: Date) {
+    const parts = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'Europe/Bucharest',
+      weekday: 'short',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false,
+      timeZoneName: 'shortOffset'
+    }).formatToParts(date);
+
+    const result: Record<string, string> = {};
+    for (const part of parts) {
+      if (part.type !== 'literal') {
+        result[part.type] = part.value;
+      }
+    }
+
+    return {
+      year: Number(result.year),
+      month: result.month,
+      day: Number(result.day),
+      weekday: result.weekday,
+      hour: Number(result.hour),
+      minute: Number(result.minute),
+      second: Number(result.second),
+      offsetMinutes: this.parseOffsetMinutes(result.timeZoneName ?? 'GMT+2')
+    };
+  }
+
+  private parseOffsetMinutes(offset: string) {
+    const match = offset.match(/GMT([+-])(\d{1,2})(?::(\d{2}))?/);
+    if (!match) {
+      return 120;
+    }
+    const sign = match[1] === '+' ? 1 : -1;
+    const hours = Number(match[2]);
+    const minutes = match[3] ? Number(match[3]) : 0;
+    return sign * (hours * 60 + minutes);
+  }
+
+  private getMillisecondsUntilNextBucharestMidnight(date: Date) {
+    const nowUtc = date.getTime();
+    const bucharestParts = this.getBucharestParts(date);
+    const bucharestLocalMs = nowUtc + bucharestParts.offsetMinutes * 60000;
+    const bucharestLocalDate = new Date(bucharestLocalMs);
+    const nextDayUtc = Date.UTC(
+      bucharestLocalDate.getUTCFullYear(),
+      bucharestLocalDate.getUTCMonth(),
+      bucharestLocalDate.getUTCDate() + 1,
+      0,
+      0,
+      0
+    );
+    const nextMidnightUtc = nextDayUtc - bucharestParts.offsetMinutes * 60000;
+    return Math.max(0, nextMidnightUtc - nowUtc);
+  }
+
+  private formatCountdown(milliseconds: number) {
+    const seconds = Math.floor(milliseconds / 1000);
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${this.pad(hours)}:${this.pad(minutes)}:${this.pad(secs)}`;
+  }
+
+  private pad(value: number) {
+    return String(value).padStart(2, '0');
+  }
+
+  get remainingCalories() {
+    return Math.max(0, this.targetCalories - this.mealTodayCalories);
+  }
+
+  get beersCanDrink() {
+    return Math.floor(this.remainingCalories / 250);
+  }
+
+  get wineGlassesCanDrink() {
+    return Math.floor(this.remainingCalories / 125);
+  }
+
+  get ginTonicsCanDrink() {
+    return Math.floor(this.remainingCalories / 150);
+  }
 
   constructor() {
     this.loadState();
     this.resetCurrentMeal();
+    this.updateBucharestClock();
+    this.bucharestClockInterval = window.setInterval(() => this.updateBucharestClock(), 1000);
+  }
+
+  ngOnDestroy() {
+    if (this.bucharestClockInterval) {
+      window.clearInterval(this.bucharestClockInterval);
+    }
   }
 
   get totalCalories() {
@@ -75,10 +213,6 @@ export class AppComponent {
 
   get totalProtein() {
     return this.mealHistory.reduce((sum, meal) => sum + meal.totalProtein, 0);
-  }
-
-  get remainingCalories() {
-    return this.targetCalories - (this.currentMealCalories + this.mealTodayCalories);
   }
 
   get trackingStatus() {
@@ -100,11 +234,17 @@ export class AppComponent {
   }
 
   get mealTodayCalories() {
-    return this.mealHistory.reduce((sum, meal) => sum + meal.totalCalories, 0);
+    const todayKey = this.getBucharestDateKey(new Date());
+    return this.mealHistory
+      .filter((meal) => this.getBucharestDateKey(meal.createdAt) === todayKey)
+      .reduce((sum, meal) => sum + meal.totalCalories, 0);
   }
 
   get mealTodayProtein() {
-    return this.mealHistory.reduce((sum, meal) => sum + meal.totalProtein, 0);
+    const todayKey = this.getBucharestDateKey(new Date());
+    return this.mealHistory
+      .filter((meal) => this.getBucharestDateKey(meal.createdAt) === todayKey)
+      .reduce((sum, meal) => sum + meal.totalProtein, 0);
   }
 
   get todayCaloriesPercent() {
@@ -112,7 +252,7 @@ export class AppComponent {
   }
 
   get todayProteinPercent() {
-    return Math.min(100, Math.round((this.mealTodayProtein / 120) * 100));
+    return Math.min(100, Math.round((this.mealTodayProtein / this.targetProtein) * 100));
   }
 
   get todayMealCount() {
@@ -121,15 +261,19 @@ export class AppComponent {
   }
 
   get recentDaySummaries() {
-    return [0, 1].map((offset) => {
+    return [0, 1, 2, 3, 4, 5, 6].map((offset) => {
       const dateKey = this.getDateKeyForOffset(offset);
       const meals = this.mealHistory.filter((meal) => this.getBucharestDateKey(meal.createdAt) === dateKey);
+      const date = new Date(Date.now() - offset * 86400000);
+      const label = offset === 0 ? 'Today' : offset === 1 ? 'Yesterday' : date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
       return {
-        label: offset === 0 ? 'Today' : 'Yesterday',
+        label,
+        dateKey,
         calories: meals.reduce((sum, meal) => sum + meal.totalCalories, 0),
         protein: meals.reduce((sum, meal) => sum + meal.totalProtein, 0),
+        meals
       };
-    });
+    }).filter(day => day.calories > 0 || day.protein > 0 || day.label === 'Today');
   }
 
   get allTemplates() {
@@ -170,8 +314,112 @@ export class AppComponent {
     this.resetCurrentMeal();
   }
 
+  openExistingMeal() {
+    this.showExistingMealSelector = true;
+  }
+
+  loadExistingMeal(meal: MealEntry) {
+    this.showExistingMealSelector = false;
+    this.showMealBuilder = true;
+    this.currentMealName = meal.name + ' (copy)';
+    this.currentIngredients = meal.ingredients.map(ing => ({
+      ...ing,
+      id: this.randomId(),
+      templateId: ing.templateId,
+      custom: ing.custom
+    }));
+  }
+
+  openDrinkSelector() {
+    this.showDrinkSelector = true;
+    this.showExistingMealSelector = false;
+    this.showMealBuilder = false;
+    this.resetDrinkCounts();
+  }
+
+  closeDrinkSelector() {
+    this.showDrinkSelector = false;
+    this.resetDrinkCounts();
+  }
+
+  resetDrinkCounts() {
+    this.drinkCounts = {};
+  }
+
+  changeDrinkCount(drink: DrinkOption, delta: number) {
+    const current = this.drinkCounts[drink.id] ?? 0;
+    const updated = Math.max(0, current + delta);
+    this.drinkCounts = {
+      ...this.drinkCounts,
+      [drink.id]: updated,
+    };
+  }
+
+  getTotalDrinkCalories() {
+    return this.availableDrinks.reduce(
+      (sum, drink) => sum + (this.drinkCounts[drink.id] ?? 0) * drink.calories,
+      0
+    );
+  }
+
+  getTotalDrinkCount() {
+    return this.availableDrinks.reduce(
+      (sum, drink) => sum + (this.drinkCounts[drink.id] ?? 0),
+      0
+    );
+  }
+
+  addDrinkMeal() {
+    const selectedDrinks = this.availableDrinks.filter(
+      (drink) => (this.drinkCounts[drink.id] ?? 0) > 0
+    );
+
+    if (selectedDrinks.length === 0) {
+      return;
+    }
+
+    const ingredients: MealIngredient[] = selectedDrinks.map((drink) => ({
+      id: this.randomId(),
+      templateId: 'custom',
+      category: 'Other',
+      name: drink.name,
+      caloriesPer100g: drink.calories,
+      proteinPer100g: 0,
+      weight: this.drinkCounts[drink.id] ?? 0,
+      custom: true,
+      unitType: 'count',
+      unitName: 'serving',
+      caloriesPerUnit: drink.calories,
+      proteinPerUnit: 0,
+    }));
+
+    const totalCalories = ingredients.reduce(
+      (sum, ingredient) => sum + this.ingredientTotalCalories(ingredient),
+      0
+    );
+    const totalProtein = ingredients.reduce(
+      (sum, ingredient) => sum + this.ingredientTotalProtein(ingredient),
+      0
+    );
+
+    const entry: MealEntry = {
+      id: this.randomId(),
+      name: selectedDrinks.length === 1 ? 'Drink' : 'Drinks',
+      ingredients,
+      totalCalories,
+      totalProtein,
+      createdAt: new Date().toISOString(),
+    };
+
+    this.mealHistory = [entry, ...this.mealHistory];
+    this.saveState();
+    this.closeDrinkSelector();
+  }
+
   cancelMeal() {
     this.showMealBuilder = false;
+    this.showExistingMealSelector = false;
+    this.showDrinkSelector = false;
     this.resetCurrentMeal();
   }
 

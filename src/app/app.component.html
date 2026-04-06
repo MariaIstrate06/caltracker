@@ -1,20 +1,24 @@
 <div class="container">
   <header>
-    <h1 style="color: #3abf24;">Daily Calorie Tracker</h1>
-    <p style="color: black;">Sal, Maria. Ce ai păpat bun?</p>
+    <div class="header-left">
+      <h1 style="color: #3abf24;">Daily Calorie Tracker</h1>
+      <p style="color: #1f2937 !important">Ce s-a păpat astăzi?</p>
+    </div>
+    <div class="header-right">
+      <p class="header-date">{{ bucharestDateTime }}</p>
+      <p class="header-countdown">Reset in {{ bucharestCountdown }}</p>
+    </div>
   </header>
 
   <section class="card summary">
     <div class="summary-top">
       <div>
-        <label for="targetCalories">Daily calorie goal</label>
-        <input
-          id="targetCalories"
-          type="number"
-          min="1"
-          [(ngModel)]="targetCalories"
-          (ngModelChange)="saveState()"
-        />
+        <label>Daily calorie goal</label>
+        <p style="color: #d9f3b4 !important">1700kcal</p>
+      </div>
+      <div>
+        <label>Daily protein goal</label>
+        <p style="color: #d9f3b4 !important">133.5g</p>
       </div>
       <div class="summary-pill">Today: {{ todayMealCount }} meals</div>
     </div>
@@ -22,11 +26,15 @@
     <div class="summary-grid">
       <div class="metric">
         <strong>{{ targetCalories }}</strong>
-        <span>Target</span>
+        <span>Target cal</span>
       </div>
       <div class="metric">
         <strong>{{ mealTodayCalories }}</strong>
-        <span>Today calories</span>
+        <span>Today cal</span>
+      </div>
+      <div class="metric">
+        <strong>{{ targetProtein | number:'1.0-1' }}</strong>
+        <span>Target protein</span>
       </div>
       <div class="metric">
         <strong>{{ mealTodayProtein | number:'1.0-1' }}</strong>
@@ -47,7 +55,7 @@
         <div class="progress-track">
           <div class="progress-bar protein" [style.width.%]="todayProteinPercent"></div>
         </div>
-        <small>{{ mealTodayProtein | number:'1.0-1' }} g</small>
+        <small>{{ mealTodayProtein | number:'1.0-1' }} / {{ targetProtein | number:'1.0-1' }} g</small>
       </div>
     </div>
 
@@ -55,30 +63,97 @@
       {{ statusText }}
     </div>
 
+    <div class="fun-facts">
+      <div class="fun-fact glowing-square">
+        <div class="icon">🍺</div>
+        <div class="text">{{ beersCanDrink }} beers</div>
+      </div>
+      <div class="fun-fact glowing-square">
+        <div class="icon">🍷</div>
+        <div class="text">{{ wineGlassesCanDrink }} glasses of red wine</div>
+      </div>
+      <div class="fun-fact glowing-square">
+        <div class="icon">🍸</div>
+        <div class="text">{{ ginTonicsCanDrink }} gin & tonics</div>
+      </div>
+    </div>
+
     <div class="summary-actions">
       <button type="button" class="primary" (click)="openNewMeal()" *ngIf="!showMealBuilder">Start new meal</button>
+      <button type="button" (click)="openExistingMeal()" *ngIf="!showMealBuilder">Add existing meal</button>
+      <button type="button" (click)="openDrinkSelector()" *ngIf="!showMealBuilder">Add drink</button>
     </div>
   </section>
 
-  <details class="card meal-builder" *ngIf="showMealBuilder" open>
-    <summary>
-      <div class="section-summary">
-        <div>
-          <h2>Build a meal</h2>
-          <p>Pick ingredients, edit calories, protein, and weight, then save the meal to history.</p>
-        </div>
-        <div class="meal-totals">
-          <div>
-            <strong>{{ currentMealCalories }}</strong>
-            <span>meal calories</span>
+  <div class="card existing-meal-selector" *ngIf="showExistingMealSelector">
+    <div class="section-summary">
+      <div>
+        <h2>Select existing meal</h2>
+        <p>Choose a previous meal to load its ingredients (you can modify them).</p>
+      </div>
+    </div>
+
+    <div class="detail-body">
+      <div *ngFor="let meal of mealHistory" class="existing-meal-item" (click)="loadExistingMeal(meal)">
+        <strong>{{ meal.name }}</strong>
+        <small>{{ meal.createdAt | date: 'medium' }}</small>
+        <span>{{ meal.totalCalories }} cal · {{ meal.totalProtein | number:'1.0-1' }} g protein</span>
+      </div>
+      <button type="button" (click)="cancelMeal()">Cancel</button>
+    </div>
+  </div>
+
+  <div class="card drink-selector-card" *ngIf="showDrinkSelector">
+    <div class="section-summary">
+      <div>
+        <h2>Add drink</h2>
+        <p>Select the drinks you had and how many servings.</p>
+      </div>
+    </div>
+
+    <div class="detail-body">
+      <div class="drink-selector">
+        <div *ngFor="let drink of availableDrinks" class="drink-option">
+          <div class="drink-option-header">
+            <span class="drink-option-name">{{ drink.name }}</span>
+            <span class="drink-option-cals">{{ drink.calories }} kcal</span>
           </div>
-          <div>
-            <strong>{{ currentMealProtein | number:'1.0-1' }}</strong>
-            <span>meal protein</span>
+          <div class="drink-counter">
+            <span class="drink-counter-label">Quantity</span>
+            <div class="drink-counter-controls">
+              <button type="button" (click)="changeDrinkCount(drink, -1)">-</button>
+              <div class="drink-counter-value">{{ drinkCounts[drink.id] || 0 }}</div>
+              <button type="button" (click)="changeDrinkCount(drink, 1)">+</button>
+            </div>
           </div>
         </div>
       </div>
-    </summary>
+      <div class="drink-actions">
+        <button type="button" class="primary" (click)="addDrinkMeal()" [disabled]="getTotalDrinkCount() === 0">
+          Add {{ getTotalDrinkCalories() }} cal drink
+        </button>
+        <button type="button" (click)="closeDrinkSelector()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card meal-builder" *ngIf="showMealBuilder">
+    <div class="section-summary">
+      <div>
+        <h2>Build a meal</h2>
+        <p>Pick ingredients, edit calories, protein, and weight, then save the meal to history.</p>
+      </div>
+      <div class="meal-totals">
+        <div>
+          <strong>{{ currentMealCalories }}</strong>
+          <span>meal calories</span>
+        </div>
+        <div>
+          <strong>{{ currentMealProtein | number:'1.0-1' }}</strong>
+          <span>meal protein</span>
+        </div>
+      </div>
+    </div>
 
     <div class="detail-body">
       <label for="mealName">Meal name</label>
@@ -173,22 +248,20 @@
         </div>
       </div>
     </div>
-  </details>
+  </div>
 
-  <details class="card history" open>
-    <summary>
-      <div class="section-summary">
-        <div>
-          <h2>Meal history</h2>
-          <p>See your last two days of calories and protein without visual clutter.</p>
-        </div>
-        <div class="history-actions">
-          <button type="button" (click)="exportHistory()">Export history</button>
-          <button type="button" (click)="fileInput.click()">Import history</button>
-          <input type="file" hidden #fileInput accept="application/json" (change)="handleImportFile($event)" />
-        </div>
+  <div class="card history">
+    <div class="section-summary">
+      <div>
+        <h2>Meal history</h2>
+        <p>See your last two days of calories and protein without visual clutter.</p>
       </div>
-    </summary>
+      <div class="history-actions">
+        <button type="button" (click)="exportHistory()">Export history</button>
+        <button type="button" (click)="fileInput.click()">Import history</button>
+        <input type="file" hidden #fileInput accept="application/json" (change)="handleImportFile($event)" />
+      </div>
+    </div>
 
     <div class="detail-body">
       <div class="day-summary-grid">
@@ -203,12 +276,12 @@
         No saved meals yet. Create a meal and save it to build your history.
       </div>
 
-      <div *ngFor="let meal of mealHistory" class="history-item">
-        <details class="meal-details">
-          <summary>
+      <div *ngFor="let day of recentDaySummaries" class="day-container">
+        <h3>{{ day.label }}</h3>
+        <details *ngFor="let meal of day.meals" class="history-item">
+          <summary class="meal-summary">
             <div>
               <strong>{{ meal.name }}</strong>
-              <small>{{ meal.createdAt | date: 'medium' }}</small>
             </div>
             <div class="meal-meta">
               <span>{{ meal.totalCalories }} cal</span>
@@ -229,5 +302,5 @@
         </details>
       </div>
     </div>
-  </details>
+  </div>
 </div>
