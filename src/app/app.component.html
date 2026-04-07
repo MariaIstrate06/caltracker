@@ -1,7 +1,39 @@
 <div class="container">
+  <!-- Profile Selector Modal -->
+  <div *ngIf="showProfileSelector" class="profile-selector-overlay">
+    <div class="profile-selector-modal">
+      <h2>Select Your Profile</h2>
+      <div class="profiles-grid">
+        <div *ngFor="let profile of availableProfiles" 
+             (click)="selectProfile(profile)"
+             class="profile-card">
+          <div class="profile-emoji">{{ profile.emoji }}</div>
+          <div class="profile-name">{{ profile.name }}</div>
+        </div>
+        
+        <!-- Quick add for istrate and irina -->
+        <div *ngIf="!availableProfiles.some(p => p.name === 'istrate')"
+             (click)="createNewProfile('istrate', '🤘')"
+             class="profile-card add-profile">
+          <div class="profile-emoji">🤘</div>
+          <div class="profile-name">istrate</div>
+          <div class="add-label">+</div>
+        </div>
+        
+        <div *ngIf="!availableProfiles.some(p => p.name === 'irina')"
+             (click)="createNewProfile('irina', '👸')"
+             class="profile-card add-profile">
+          <div class="profile-emoji">👸</div>
+          <div class="profile-name">irina</div>
+          <div class="add-label">+</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <header>
     <div class="header-left">
-      <h1 style="color: #3abf24;">Daily Calorie Tracker</h1>
+      <h1 style="color: #3abf24;"><span class="profile-emoji-header" *ngIf="currentProfile">{{ currentProfileEmoji }}</span> Daily Calorie Tracker</h1>
       <p style="color: #1f2937 !important">Ce s-a păpat astăzi?</p>
     </div>
     <div class="header-right">
@@ -23,22 +55,29 @@
       <div class="summary-pill">Today: {{ todayMealCount }} meals</div>
     </div>
 
-    <div class="summary-grid">
-      <div class="metric">
-        <strong>{{ targetCalories }}</strong>
-        <span>Target cal</span>
+    <div class="summary-grid summary-grid-compact">
+      <div class="metric metric-wide" [ngClass]="caloriesLabelClass">
+        <div *ngIf="!editingTargets">
+          <strong>Target: {{ mealTodayCalories }} kCals / {{ targetCalories }} kCals</strong>
+          <button (click)="editingTargets = true" class="edit-targets-btn" title="Edit targets">✎</button>
+        </div>
+        <div *ngIf="editingTargets" class="target-editor">
+          <input type="number" [(ngModel)]="editableTargetCalories" min="500" max="5000" class="target-input">
+          <span>kCals</span>
+        </div>
       </div>
-      <div class="metric">
-        <strong>{{ mealTodayCalories }}</strong>
-        <span>Today cal</span>
+      <div class="metric metric-wide" [ngClass]="proteinLabelClass">
+        <div *ngIf="!editingTargets">
+          <strong>Protein: {{ mealTodayProtein | number:'1.0-1' }} g / {{ targetProtein }} g</strong>
+        </div>
+        <div *ngIf="editingTargets" class="target-editor">
+          <input type="number" [(ngModel)]="editableTargetProtein" min="20" max="300" step="0.5" class="target-input">
+          <span>g</span>
+        </div>
       </div>
-      <div class="metric">
-        <strong>{{ targetProtein | number:'1.0-1' }}</strong>
-        <span>Target protein</span>
-      </div>
-      <div class="metric">
-        <strong>{{ mealTodayProtein | number:'1.0-1' }}</strong>
-        <span>Today protein</span>
+      <div *ngIf="editingTargets" class="target-buttons">
+        <button (click)="saveTargets()" class="save-btn">Save</button>
+        <button (click)="cancelEditingTargets()" class="cancel-btn">Cancel</button>
       </div>
     </div>
 
@@ -182,6 +221,7 @@
           <span>Ingredient</span>
           <span>Weight (g)</span>
           <span>Calories / 100g</span>
+          <span>Protein / 100g</span>
           <span></span>
         </div>
 
@@ -227,13 +267,22 @@
             (ngModelChange)="saveState()"
           />
 
+          <input
+            type="number"
+            min="0"
+            [(ngModel)]="ingredient.proteinPer100g"
+            (ngModelChange)="saveState()"
+          />
+
           <button type="button" class="remove-row" (click)="removeIngredientRow(ingredient.id)">Remove</button>
         </div>
       </div>
 
       <div class="buttons-row">
         <button type="button" (click)="addIngredientRow()">Add ingredient to meal</button>
-        <button type="button" class="primary" (click)="saveMeal()" [disabled]="!currentMealName.trim()">Save meal to history</button>
+        <button type="button" class="primary" (click)="saveMeal()" [disabled]="!currentMealName.trim()">
+          {{ isEditingExistingMeal ? 'Update meal' : 'Save meal to history' }}
+        </button>
         <button type="button" (click)="cancelMeal()">Cancel</button>
       </div>
 
@@ -241,10 +290,6 @@
         <div class="field-inline">
           <label>Ingredient name</label>
           <input type="text" [(ngModel)]="ingredient.name" (ngModelChange)="saveState()" placeholder="Custom ingredient name" />
-        </div>
-        <div class="field-inline">
-          <label>Protein / 100g</label>
-          <input type="number" min="0" [(ngModel)]="ingredient.proteinPer100g" (ngModelChange)="saveState()" />
         </div>
       </div>
     </div>
@@ -286,6 +331,22 @@
             <div class="meal-meta">
               <span>{{ meal.totalCalories }} cal</span>
               <span>{{ meal.totalProtein | number:'1.0-1' }} g protein</span>
+              <div class="history-meal-actions">
+                <button
+                  type="button"
+                  class="history-action-btn"
+                  (click)="$event.preventDefault(); $event.stopPropagation(); editMealFromHistory(meal)"
+                >
+                  Edit
+                </button>
+                <button
+                  type="button"
+                  class="history-action-btn danger"
+                  (click)="$event.preventDefault(); $event.stopPropagation(); deleteMeal(meal.id)"
+                >
+                  Delete
+                </button>
+              </div>
             </div>
           </summary>
           <div class="meal-ingredients">
@@ -303,27 +364,4 @@
       </div>
     </div>
   </div>
-
-    <section class="card stack history-actions" *ngIf="mealHistory.length > 0">
-      <div class="row space-between align-center">
-        <h2>Manage meals</h2>
-        <span class="muted">Edit names or remove entries</span>
-      </div>
-
-      <div class="stack" *ngFor="let meal of mealHistory">
-        <div class="row space-between align-center">
-          <strong>{{ meal.name }}</strong>
-          <div class="row gap-sm">
-            <button type="button" class="ghost" (click)="startEditingMeal(meal)">Edit</button>
-            <button type="button" class="ghost danger" (click)="deleteMeal(meal.id)">Delete</button>
-          </div>
-        </div>
-
-        <div class="row gap-sm" *ngIf="editingMeal?.id === meal.id">
-          <input type="text" [(ngModel)]="editingMeal!.name" placeholder="Meal name" />
-          <button type="button" class="ghost" (click)="saveMealEdit()">Save</button>
-          <button type="button" class="ghost" (click)="cancelEditingMeal()">Cancel</button>
-        </div>
-      </div>
-    </section>
 </div>

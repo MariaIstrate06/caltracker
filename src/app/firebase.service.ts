@@ -20,8 +20,15 @@ const db = getFirestore(app);
 
 export interface CalTrackState {
   targetCalories: number;
+  targetProtein: number;
   mealHistory: any[];
   customIngredients: any[];
+  emoji?: string;
+}
+
+export interface ProfileMetadata {
+  name: string;
+  emoji: string;
 }
 
 @Injectable({
@@ -81,26 +88,31 @@ export class FirebaseService {
     return this.selectedProfile;
   }
 
-  async getAvailableProfiles(): Promise<string[]> {
+  async getAvailableProfiles(): Promise<ProfileMetadata[]> {
     await this.waitUntilReady();
     if (!this.isInitialized) return [];
     try {
       const querySnapshot = await getDocs(collection(db, 'profiles'));
-      return querySnapshot.docs.map(doc => doc.id);
+      return querySnapshot.docs.map(doc => ({
+        name: doc.id,
+        emoji: doc.data().emoji || '👤'
+      }));
     } catch (error) {
       console.error('Error getting profiles:', error);
       return [];
     }
   }
 
-  async createProfile(profileName: string): Promise<void> {
+  async createProfile(profileName: string, emoji: string): Promise<void> {
     await this.waitUntilReady();
     if (!this.isInitialized) return;
     try {
       const emptyState: CalTrackState = {
-        targetCalories: 2000,
+        targetCalories: 1700,
+        targetProtein: 133.5,
         mealHistory: [],
-        customIngredients: []
+        customIngredients: [],
+        emoji
       };
       await setDoc(doc(db, 'profiles', profileName), emptyState);
     } catch (error) {

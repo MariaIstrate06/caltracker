@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { ChangeDetectorRef, Component, NgZone, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FirebaseService } from './firebase.service';
@@ -50,13 +50,15 @@ interface DrinkOption {
 
 interface CalTrackState {
   targetCalories: number;
+  targetProtein: number;
   mealHistory: MealEntry[];
   customIngredients: IngredientTemplate[];
+  emoji?: string;
 }
 
-interface EditingMealDraft {
-  id: string;
+interface ProfileMetadata {
   name: string;
+  emoji: string;
 }
 
 @Component({
@@ -68,18 +70,26 @@ interface EditingMealDraft {
 })
 export class AppComponent implements OnDestroy {
   title = 'CalTrack';
-  targetCalories = 2000;
+  targetCalories = 1700;
   targetProtein = 133.5;
   currentMealName = '';
   currentIngredients: MealIngredient[] = [];
   mealHistory: MealEntry[] = [];
-  editingMeal: EditingMealDraft | null = null;
+  editingExistingMealId: string | null = null;
   customIngredients: IngredientTemplate[] = [];
   categories: IngredientCategory[] = ['Meat', 'Carb', 'Veggie', 'Other'];
   showMealBuilder = false;
   showExistingMealSelector = false;
   showDrinkSelector = false;
+  showProfileSelector = false;
   drinkCounts: Record<string, number> = {};
+  availableProfiles: ProfileMetadata[] = [];
+  currentProfile: string | null = null;
+  currentProfileEmoji = '👤';
+  editingTargets = false;
+  editableTargetCalories = 1700;
+  editableTargetProtein = 133.5;
+  logMealForYesterday = false;
   bucharestDateTime = '';
   bucharestCountdown = '';
   private bucharestClockInterval?: number;
@@ -201,11 +211,59 @@ export class AppComponent implements OnDestroy {
     return Math.floor(this.remainingCalories / 150);
   }
 
-  constructor(private firebaseService: FirebaseService) {
-    this.loadState();
+  constructor(
+    private firebaseService: FirebaseService,
+    private zone: NgZone,
+    private cdr: ChangeDetectorRef
+  ) {
+    void this.loadState();
     this.resetCurrentMeal();
     this.updateBucharestClock();
     this.bucharestClockInterval = window.setInterval(() => this.updateBucharestClock(), 1000);
+  }
+
+
+  // ===== PROFILE MANAGEMENT =====
+  async loadAvailableProfiles() {
+    const profiles = await this.firebaseService.getAvailableProfiles();
+    this.availableProfiles = profiles;
+  }
+
+  async selectProfile(profile: ProfileMetadata) {
+    this.currentProfile = profile.name;
+    this.currentProfileEmoji = profile.emoji;
+    localStorage.setItem('currentProfile', profile.name);
+    this.firebaseService.setSelectedProfile(profile.name);
+    this.showProfileSelector = false;
+    await this.loadState();
+  }
+
+  async createNewProfile(name: string, emoji: string) {
+    await this.firebaseService.createProfile(name, emoji);
+    this.currentProfile = name;
+    this.currentProfileEmoji = emoji;
+    localStorage.setItem('currentProfile', name);
+    this.firebaseService.setSelectedProfile(name);
+    this.showProfileSelector = false;
+    await this.loadProfileData();
+  }
+
+  async loadProfileData() {
+    await this.loadState();
+  }
+
+  // ===== EDITABLE TARGETS =====
+  saveTargets() {
+    this.targetCalories = this.editableTargetCalories;
+    this.targetProtein = this.editableTargetProtein;
+    this.editingTargets = false;
+    this.saveState();
+  }
+
+  cancelEditingTargets() {
+    this.editableTargetCalories = this.targetCalories;
+    this.editableTargetProtein = this.targetProtein;
+    this.editingTargets = false;
   }
 
   ngOnDestroy() {
@@ -267,6 +325,24 @@ export class AppComponent implements OnDestroy {
     return this.mealHistory.filter((meal) => this.getBucharestDateKey(meal.createdAt) === todayKey).length;
   }
 
+  get caloriesLabelClass() {
+    if (this.mealTodayCalories < 1200) {
+      return 'summary-value-neutral';
+    }
+    if (this.mealTodayCalories <= 1700) {
+      return 'summary-value-good';
+    }
+    return 'summary-value-over';
+  }
+
+  get proteinLabelClass() {
+    return this.mealTodayProtein >= 100 ? 'summary-value-good' : 'summary-value-over';
+  }
+
+  get isEditingExistingMeal() {
+    return !!this.editingExistingMealId;
+  }
+
   get recentDaySummaries() {
     return [0, 1, 2, 3, 4, 5, 6].map((offset) => {
       const dateKey = this.getDateKeyForOffset(offset);
@@ -317,6 +393,7 @@ export class AppComponent implements OnDestroy {
   }
 
   openNewMeal() {
+    this.editingExistingMealId = null;
     this.showMealBuilder = true;
     this.resetCurrentMeal();
   }
@@ -328,12 +405,27 @@ export class AppComponent implements OnDestroy {
   loadExistingMeal(meal: MealEntry) {
     this.showExistingMealSelector = false;
     this.showMealBuilder = true;
-    this.currentMealName = meal.name + ' (copy)';
-    this.currentIngredients = meal.ingredients.map(ing => ({
-      ...ing,
+    this.editingExistingMealId = null;
+    this.currentMealName = `${meal.name} (copy)`;
+    this.currentIngredients = meal.ingredients.map((ingredient) => ({
+      ...ingredient,
       id: this.randomId(),
-      templateId: ing.templateId,
-      custom: ing.custom
+      templateId: ingredient.templateId,
+      custom: ingredient.custom,
+    }));
+  }
+
+  editMealFromHistory(meal: MealEntry) {
+    this.showExistingMealSelector = false;
+    this.showDrinkSelector = false;
+    this.showMealBuilder = true;
+    this.editingExistingMealId = meal.id;
+    this.currentMealName = meal.name;
+    this.currentIngredients = meal.ingredients.map((ingredient) => ({
+      ...ingredient,
+      id: this.randomId(),
+      templateId: ingredient.templateId,
+      custom: ingredient.custom,
     }));
   }
 
@@ -427,6 +519,7 @@ export class AppComponent implements OnDestroy {
     this.showMealBuilder = false;
     this.showExistingMealSelector = false;
     this.showDrinkSelector = false;
+    this.editingExistingMealId = null;
     this.resetCurrentMeal();
   }
 
@@ -532,23 +625,46 @@ export class AppComponent implements OnDestroy {
       return;
     }
 
-    if (!confirm('Save this meal to history?')) {
+    const isEditing = !!this.editingExistingMealId;
+    const confirmationText = isEditing ? 'Save changes to this meal?' : 'Save this meal to history?';
+    if (!confirm(confirmationText)) {
       return;
     }
 
-    const entry: MealEntry = {
-      id: this.randomId(),
-      name: this.currentMealName.trim(),
-      ingredients: ingredients.map((item) => ({ ...item })),
-      totalCalories: this.currentMealCalories,
-      totalProtein: Number(this.currentMealProtein.toFixed(1)),
-      createdAt: new Date().toISOString(),
-    };
+    if (isEditing) {
+      const mealToUpdate = this.mealHistory.find((meal) => meal.id === this.editingExistingMealId);
+      if (!mealToUpdate) {
+        return;
+      }
 
-    this.mealHistory = [entry, ...this.mealHistory];
+      const updatedMeal: MealEntry = {
+        id: mealToUpdate.id,
+        name: this.currentMealName.trim(),
+        ingredients: ingredients.map((item) => ({ ...item })),
+        totalCalories: ingredients.reduce((sum, item) => sum + this.ingredientTotalCalories(item), 0),
+        totalProtein: Number(ingredients.reduce((sum, item) => sum + this.ingredientTotalProtein(item), 0).toFixed(1)),
+        createdAt: mealToUpdate.createdAt,
+      };
+
+      this.mealHistory = this.mealHistory.map((meal) =>
+        meal.id === mealToUpdate.id ? updatedMeal : meal
+      );
+    } else {
+      const entry: MealEntry = {
+        id: this.randomId(),
+        name: this.currentMealName.trim(),
+        ingredients: ingredients.map((item) => ({ ...item })),
+        totalCalories: ingredients.reduce((sum, item) => sum + this.ingredientTotalCalories(item), 0),
+        totalProtein: Number(ingredients.reduce((sum, item) => sum + this.ingredientTotalProtein(item), 0).toFixed(1)),
+        createdAt: new Date().toISOString(),
+      };
+
+      this.mealHistory = [entry, ...this.mealHistory];
+    }
+
     this.saveCustomRows(ingredients);
     this.saveState();
-    this.resetCurrentMeal();
+    this.cancelMeal();
   }
 
   exportHistory() {
@@ -637,6 +753,7 @@ export class AppComponent implements OnDestroy {
   private getExportState(): CalTrackState {
     return {
       targetCalories: this.targetCalories,
+      targetProtein: this.targetProtein,
       mealHistory: this.mealHistory,
       customIngredients: this.customIngredients,
     };
@@ -652,38 +769,10 @@ export class AppComponent implements OnDestroy {
     return date.toLocaleDateString('en-CA', { timeZone: 'Europe/Bucharest' });
   }
 
-  startEditingMeal(meal: MealEntry) {
-    this.editingMeal = {
-      id: meal.id,
-      name: meal.name,
-    };
-  }
-
-  cancelEditingMeal() {
-    this.editingMeal = null;
-  }
-
-  saveMealEdit() {
-    if (!this.editingMeal) {
-      return;
-    }
-
-    const trimmedName = this.editingMeal.name.trim();
-    if (!trimmedName) {
-      return;
-    }
-
-    this.mealHistory = this.mealHistory.map((meal) =>
-      meal.id === this.editingMeal!.id ? { ...meal, name: trimmedName } : meal
-    );
-    this.editingMeal = null;
-    this.saveState();
-  }
-
   deleteMeal(mealId: string) {
     this.mealHistory = this.mealHistory.filter((meal) => meal.id !== mealId);
-    if (this.editingMeal?.id === mealId) {
-      this.editingMeal = null;
+    if (this.editingExistingMealId === mealId) {
+      this.cancelMeal();
     }
     this.saveState();
   }
@@ -696,16 +785,24 @@ export class AppComponent implements OnDestroy {
   }
 
   private async loadState() {
-    // Try Firebase first
+    const applyState = (state: CalTrackState) => {
+      this.targetCalories = state.targetCalories ?? this.targetCalories;
+      this.targetProtein = state.targetProtein ?? this.targetProtein;
+      this.mealHistory = state.mealHistory ?? [];
+      this.customIngredients = state.customIngredients ?? [];
+      this.editableTargetCalories = this.targetCalories;
+      this.editableTargetProtein = this.targetProtein;
+    };
+
     const firebaseState = await this.firebaseService.loadState();
     if (firebaseState) {
-      this.targetCalories = firebaseState.targetCalories ?? this.targetCalories;
-      this.mealHistory = firebaseState.mealHistory ?? [];
-      this.customIngredients = firebaseState.customIngredients ?? [];
+      this.zone.run(() => {
+        applyState(firebaseState);
+        this.cdr.detectChanges();
+      });
       return;
     }
 
-    // Fallback to localStorage
     const saved = localStorage.getItem('calTrackState');
     if (!saved) {
       return;
@@ -713,9 +810,10 @@ export class AppComponent implements OnDestroy {
 
     try {
       const parsed = JSON.parse(saved) as CalTrackState;
-      this.targetCalories = parsed.targetCalories ?? this.targetCalories;
-      this.mealHistory = parsed.mealHistory ?? [];
-      this.customIngredients = parsed.customIngredients ?? [];
+      this.zone.run(() => {
+        applyState(parsed);
+        this.cdr.detectChanges();
+      });
     } catch {
       // Ignore invalid saved state.
     }
