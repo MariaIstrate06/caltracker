@@ -1,6 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { FirebaseService } from './firebase.service';
 
 type IngredientCategory = 'Meat' | 'Carb' | 'Veggie' | 'Other';
 
@@ -194,7 +195,7 @@ export class AppComponent implements OnDestroy {
     return Math.floor(this.remainingCalories / 150);
   }
 
-  constructor() {
+  constructor(private firebaseService: FirebaseService) {
     this.loadState();
     this.resetCurrentMeal();
     this.updateBucharestClock();
@@ -646,10 +647,23 @@ export class AppComponent implements OnDestroy {
   }
 
   saveState() {
-    localStorage.setItem('calTrackState', JSON.stringify(this.getExportState()));
+    const state = this.getExportState();
+    localStorage.setItem('calTrackState', JSON.stringify(state));
+    // Save to Firebase asynchronously
+    this.firebaseService.saveState(state).catch(err => console.error('Firebase save error:', err));
   }
 
-  private loadState() {
+  private async loadState() {
+    // Try Firebase first
+    const firebaseState = await this.firebaseService.loadState();
+    if (firebaseState) {
+      this.targetCalories = firebaseState.targetCalories ?? this.targetCalories;
+      this.mealHistory = firebaseState.mealHistory ?? [];
+      this.customIngredients = firebaseState.customIngredients ?? [];
+      return;
+    }
+
+    // Fallback to localStorage
     const saved = localStorage.getItem('calTrackState');
     if (!saved) {
       return;
