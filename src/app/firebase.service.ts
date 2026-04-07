@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInAnonymously, onAuthStateChanged, User } from 'firebase/auth';
-import { getFirestore, doc, setDoc, getDoc, collection, getDocs } from 'firebase/firestore';
+import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc } from 'firebase/firestore';
 
 // TODO: Replace with your Firebase config
 const firebaseConfig = {
@@ -45,7 +45,7 @@ export class FirebaseService {
     this.initPromise = new Promise<void>((resolve) => {
       this.resolveInit = resolve;
     });
-    this.selectedProfile = localStorage.getItem('selectedProfile') ?? 'default';
+    this.selectedProfile = localStorage.getItem('selectedProfile') ?? 'istrate';
     this.initializeAuth();
   }
 
@@ -68,7 +68,7 @@ export class FirebaseService {
 
   private getActiveProfile() {
     const storedProfile = localStorage.getItem('selectedProfile');
-    const activeProfile = this.selectedProfile ?? storedProfile ?? 'default';
+    const activeProfile = this.selectedProfile ?? storedProfile ?? 'istrate';
     if (!this.selectedProfile || this.selectedProfile !== activeProfile) {
       this.selectedProfile = activeProfile;
       localStorage.setItem('selectedProfile', activeProfile);
@@ -93,13 +93,61 @@ export class FirebaseService {
     if (!this.isInitialized) return [];
     try {
       const querySnapshot = await getDocs(collection(db, 'profiles'));
-      return querySnapshot.docs.map(doc => ({
-        name: doc.id,
-        emoji: doc.data().emoji || '👤'
-      }));
+      return querySnapshot.docs
+        .filter((docSnapshot) => docSnapshot.id === 'istrate' || docSnapshot.id === 'irina')
+        .map((docSnapshot) => ({
+          name: docSnapshot.id,
+          emoji:
+            docSnapshot.data().emoji ||
+            (docSnapshot.id === 'istrate' ? '🤘' : docSnapshot.id === 'irina' ? '👸' : '👤'),
+        }));
     } catch (error) {
       console.error('Error getting profiles:', error);
       return [];
+    }
+  }
+
+  async loadStateForProfile(profileName: string): Promise<CalTrackState | null> {
+    await this.waitUntilReady();
+    if (!this.user || !this.isInitialized) {
+      return null;
+    }
+
+    try {
+      const docSnap = await getDoc(doc(db, 'profiles', profileName));
+      if (docSnap.exists()) {
+        return docSnap.data() as CalTrackState;
+      }
+    } catch (error) {
+      console.error(`Error loading profile ${profileName}:`, error);
+    }
+
+    return null;
+  }
+
+  async saveStateForProfile(profileName: string, state: CalTrackState): Promise<void> {
+    await this.waitUntilReady();
+    if (!this.user || !this.isInitialized) {
+      return;
+    }
+
+    try {
+      await setDoc(doc(db, 'profiles', profileName), state);
+    } catch (error) {
+      console.error(`Error saving profile ${profileName}:`, error);
+    }
+  }
+
+  async deleteProfile(profileName: string): Promise<void> {
+    await this.waitUntilReady();
+    if (!this.user || !this.isInitialized) {
+      return;
+    }
+
+    try {
+      await deleteDoc(doc(db, 'profiles', profileName));
+    } catch (error) {
+      console.error(`Error deleting profile ${profileName}:`, error);
     }
   }
 

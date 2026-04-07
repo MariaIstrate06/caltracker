@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, NgZone, OnDestroy } from '@angular/core';
+import { ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FirebaseService } from './firebase.service';
@@ -68,7 +68,7 @@ interface ProfileMetadata {
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })
-export class AppComponent implements OnDestroy {
+export class AppComponent implements OnDestroy, OnInit {
   title = 'CalTrack';
   targetCalories = 1700;
   targetProtein = 133.5;
@@ -81,7 +81,7 @@ export class AppComponent implements OnDestroy {
   showMealBuilder = false;
   showExistingMealSelector = false;
   showDrinkSelector = false;
-  showProfileSelector = false;
+  showProfileSelector = true;
   drinkCounts: Record<string, number> = {};
   availableProfiles: ProfileMetadata[] = [];
   currentProfile: string | null = null;
@@ -216,10 +216,13 @@ export class AppComponent implements OnDestroy {
     private zone: NgZone,
     private cdr: ChangeDetectorRef
   ) {
-    void this.loadState();
     this.resetCurrentMeal();
     this.updateBucharestClock();
     this.bucharestClockInterval = window.setInterval(() => this.updateBucharestClock(), 1000);
+  }
+
+  async ngOnInit() {
+    await this.initializeProfileSelection();
   }
 
 
@@ -227,6 +230,19 @@ export class AppComponent implements OnDestroy {
   async loadAvailableProfiles() {
     const profiles = await this.firebaseService.getAvailableProfiles();
     this.availableProfiles = profiles;
+  }
+
+  get hasIstrateProfile() {
+    return this.availableProfiles.some((profile) => profile.name === 'istrate');
+  }
+
+  get hasIrinaProfile() {
+    return this.availableProfiles.some((profile) => profile.name === 'irina');
+  }
+
+  async openProfileSelector() {
+    await this.loadAvailableProfiles();
+    this.showProfileSelector = true;
   }
 
   async selectProfile(profile: ProfileMetadata) {
@@ -240,6 +256,7 @@ export class AppComponent implements OnDestroy {
 
   async createNewProfile(name: string, emoji: string) {
     await this.firebaseService.createProfile(name, emoji);
+    await this.loadAvailableProfiles();
     this.currentProfile = name;
     this.currentProfileEmoji = emoji;
     localStorage.setItem('currentProfile', name);
@@ -250,6 +267,94 @@ export class AppComponent implements OnDestroy {
 
   async loadProfileData() {
     await this.loadState();
+  }
+
+  private async initializeProfileSelection() {
+    await this.migrateDefaultProfileToIstrate();
+    await this.loadAvailableProfiles();
+    await this.ensureStarterProfiles();
+
+    const savedProfile = localStorage.getItem('selectedProfile') ?? localStorage.getItem('currentProfile') ?? 'istrate';
+    const matchingProfile = savedProfile
+      ? this.availableProfiles.find((profile) => profile.name === savedProfile)
+      : null;
+
+    if (matchingProfile) {
+      this.currentProfile = matchingProfile.name;
+      this.currentProfileEmoji = matchingProfile.emoji;
+      this.firebaseService.setSelectedProfile(matchingProfile.name);
+      await this.loadState();
+    }
+
+    // Netflix-style flow: always ask who is using the app on entry.
+    this.showProfileSelector = true;
+  }
+
+  private async migrateDefaultProfileToIstrate() {
+    const defaultState = await this.firebaseService.loadStateForProfile('default');
+    if (!defaultState) {
+      return;
+    }
+
+    const istrateState = await this.firebaseService.loadStateForProfile('istrate');
+    const mergedState: CalTrackState = {
+      targetCalories: defaultState.targetCalories ?? istrateState?.targetCalories ?? 1700,
+      targetProtein: defaultState.targetProtein ?? istrateState?.targetProtein ?? 133.5,
+      mealHistory: this.mergeMeals(defaultState.mealHistory ?? [], istrateState?.mealHistory ?? []),
+      customIngredients: this.mergeCustomIngredients(defaultState.customIngredients ?? [], istrateState?.customIngredients ?? []),
+      emoji: '🤘',
+    };
+
+    await this.firebaseService.saveStateForProfile('istrate', mergedState);
+    await this.firebaseService.deleteProfile('default');
+
+    const selected = localStorage.getItem('selectedProfile');
+    const current = localStorage.getItem('currentProfile');
+    if (selected === 'default') {
+      localStorage.setItem('selectedProfile', 'istrate');
+    }
+    if (current === 'default') {
+      localStorage.setItem('currentProfile', 'istrate');
+    }
+  }
+
+  private mergeMeals(primary: MealEntry[], secondary: MealEntry[]) {
+    const byId = new Map<string, MealEntry>();
+    for (const meal of secondary) {
+      byId.set(meal.id, meal);
+    }
+    for (const meal of primary) {
+      byId.set(meal.id, meal);
+    }
+    return Array.from(byId.values()).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  }
+
+  private mergeCustomIngredients(primary: IngredientTemplate[], secondary: IngredientTemplate[]) {
+    const byKey = new Map<string, IngredientTemplate>();
+    for (const ingredient of secondary) {
+      const key = `${ingredient.name.toLowerCase()}|${ingredient.category}`;
+      byKey.set(key, ingredient);
+    }
+    for (const ingredient of primary) {
+      const key = `${ingredient.name.toLowerCase()}|${ingredient.category}`;
+      byKey.set(key, ingredient);
+    }
+    return Array.from(byKey.values());
+  }
+
+  private async ensureStarterProfiles() {
+    const desiredProfiles: ProfileMetadata[] = [
+      { name: 'istrate', emoji: '🤘' },
+      { name: 'irina', emoji: '👸' },
+    ];
+
+    for (const profile of desiredProfiles) {
+      if (!this.availableProfiles.some((item) => item.name === profile.name)) {
+        await this.firebaseService.createProfile(profile.name, profile.emoji);
+      }
+    }
+
+    await this.loadAvailableProfiles();
   }
 
   // ===== EDITABLE TARGETS =====
@@ -394,6 +499,14 @@ export class AppComponent implements OnDestroy {
 
   openNewMeal() {
     this.editingExistingMealId = null;
+    this.logMealForYesterday = false;
+    this.showMealBuilder = true;
+    this.resetCurrentMeal();
+  }
+
+  openYesterdayMeal() {
+    this.editingExistingMealId = null;
+    this.logMealForYesterday = true;
     this.showMealBuilder = true;
     this.resetCurrentMeal();
   }
@@ -430,6 +543,7 @@ export class AppComponent implements OnDestroy {
   }
 
   openDrinkSelector() {
+    this.logMealForYesterday = false;
     this.showDrinkSelector = true;
     this.showExistingMealSelector = false;
     this.showMealBuilder = false;
@@ -507,7 +621,7 @@ export class AppComponent implements OnDestroy {
       ingredients,
       totalCalories,
       totalProtein,
-      createdAt: new Date().toISOString(),
+      createdAt: this.getMealTimestamp(),
     };
 
     this.mealHistory = [entry, ...this.mealHistory];
@@ -515,11 +629,17 @@ export class AppComponent implements OnDestroy {
     this.closeDrinkSelector();
   }
 
+  addDrinkMealForYesterday() {
+    this.logMealForYesterday = true;
+    this.addDrinkMeal();
+  }
+
   cancelMeal() {
     this.showMealBuilder = false;
     this.showExistingMealSelector = false;
     this.showDrinkSelector = false;
     this.editingExistingMealId = null;
+    this.logMealForYesterday = false;
     this.resetCurrentMeal();
   }
 
@@ -656,7 +776,7 @@ export class AppComponent implements OnDestroy {
         ingredients: ingredients.map((item) => ({ ...item })),
         totalCalories: ingredients.reduce((sum, item) => sum + this.ingredientTotalCalories(item), 0),
         totalProtein: Number(ingredients.reduce((sum, item) => sum + this.ingredientTotalProtein(item), 0).toFixed(1)),
-        createdAt: new Date().toISOString(),
+        createdAt: this.getMealTimestamp(),
       };
 
       this.mealHistory = [entry, ...this.mealHistory];
@@ -665,6 +785,11 @@ export class AppComponent implements OnDestroy {
     this.saveCustomRows(ingredients);
     this.saveState();
     this.cancelMeal();
+  }
+
+  saveMealForYesterday() {
+    this.logMealForYesterday = true;
+    this.saveMeal();
   }
 
   exportHistory() {
@@ -767,6 +892,15 @@ export class AppComponent implements OnDestroy {
   private getDateKeyForOffset(offset: number) {
     const date = new Date(Date.now() - offset * 86400000);
     return date.toLocaleDateString('en-CA', { timeZone: 'Europe/Bucharest' });
+  }
+
+  private getMealTimestamp() {
+    if (!this.logMealForYesterday) {
+      return new Date().toISOString();
+    }
+
+    const yesterday = new Date(Date.now() - 86400000);
+    return yesterday.toISOString();
   }
 
   deleteMeal(mealId: string) {

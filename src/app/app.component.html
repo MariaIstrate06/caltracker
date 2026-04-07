@@ -4,28 +4,20 @@
     <div class="profile-selector-modal">
       <h2>Select Your Profile</h2>
       <div class="profiles-grid">
-        <div *ngFor="let profile of availableProfiles" 
-             (click)="selectProfile(profile)"
-             class="profile-card">
-          <div class="profile-emoji">{{ profile.emoji }}</div>
-          <div class="profile-name">{{ profile.name }}</div>
-        </div>
-        
-        <!-- Quick add for istrate and irina -->
-        <div *ngIf="!availableProfiles.some(p => p.name === 'istrate')"
-             (click)="createNewProfile('istrate', '🤘')"
-             class="profile-card add-profile">
+        <div
+          (click)="hasIstrateProfile ? selectProfile({ name: 'istrate', emoji: '🤘' }) : createNewProfile('istrate', '🤘')"
+          class="profile-card"
+        >
           <div class="profile-emoji">🤘</div>
           <div class="profile-name">istrate</div>
-          <div class="add-label">+</div>
         </div>
-        
-        <div *ngIf="!availableProfiles.some(p => p.name === 'irina')"
-             (click)="createNewProfile('irina', '👸')"
-             class="profile-card add-profile">
+
+        <div
+          (click)="hasIrinaProfile ? selectProfile({ name: 'irina', emoji: '👸' }) : createNewProfile('irina', '👸')"
+          class="profile-card"
+        >
           <div class="profile-emoji">👸</div>
           <div class="profile-name">irina</div>
-          <div class="add-label">+</div>
         </div>
       </div>
     </div>
@@ -39,6 +31,7 @@
     <div class="header-right">
       <p class="header-date">{{ bucharestDateTime }}</p>
       <p class="header-countdown">Reset in {{ bucharestCountdown }}</p>
+      <button type="button" class="profile-switch-btn" (click)="openProfileSelector()">Switch profile</button>
     </div>
   </header>
 
@@ -46,13 +39,22 @@
     <div class="summary-top">
       <div>
         <label>Daily calorie goal</label>
-        <p style="color: #d9f3b4 !important">1700kcal</p>
+        <p *ngIf="!editingTargets" style="color: #d9f3b4 !important">{{ targetCalories }}kcal</p>
+        <input *ngIf="editingTargets" type="number" min="500" max="5000" [(ngModel)]="editableTargetCalories" class="target-input" />
       </div>
       <div>
         <label>Daily protein goal</label>
-        <p style="color: #d9f3b4 !important">133.5g</p>
+        <p *ngIf="!editingTargets" style="color: #d9f3b4 !important">{{ targetProtein | number:'1.0-1' }}g</p>
+        <input *ngIf="editingTargets" type="number" min="20" max="300" step="0.5" [(ngModel)]="editableTargetProtein" class="target-input" />
       </div>
-      <div class="summary-pill">Today: {{ todayMealCount }} meals</div>
+      <div class="summary-pill">
+        <span *ngIf="!editingTargets">Today: {{ todayMealCount }} meals</span>
+        <span *ngIf="editingTargets" class="target-buttons">
+          <button (click)="saveTargets()" class="save-btn">Save</button>
+          <button (click)="cancelEditingTargets()" class="cancel-btn">Cancel</button>
+        </span>
+        <button *ngIf="!editingTargets" type="button" class="edit-targets-btn" (click)="editingTargets = true">Edit goals</button>
+      </div>
     </div>
 
     <div class="summary-grid summary-grid-compact">
@@ -171,6 +173,9 @@
         <button type="button" class="primary" (click)="addDrinkMeal()" [disabled]="getTotalDrinkCount() === 0">
           Add {{ getTotalDrinkCalories() }} cal drink
         </button>
+        <button type="button" class="primary" (click)="addDrinkMealForYesterday()" [disabled]="getTotalDrinkCount() === 0">
+          Add {{ getTotalDrinkCalories() }} cal drink for yesterday
+        </button>
         <button type="button" (click)="closeDrinkSelector()">Cancel</button>
       </div>
     </div>
@@ -180,6 +185,10 @@
     <div class="section-summary">
       <div>
         <h2>Build a meal</h2>
+        <div class="today-yesterday-toggle">
+          <label><input type="radio" name="logDay" [value]="false" [(ngModel)]="logMealForYesterday" /> Today</label>
+          <label><input type="radio" name="logDay" [value]="true" [(ngModel)]="logMealForYesterday" /> Yesterday</label>
+        </div>
         <p>Pick ingredients, edit calories, protein, and weight, then save the meal to history.</p>
       </div>
       <div class="meal-totals">
@@ -282,6 +291,15 @@
         <button type="button" (click)="addIngredientRow()">Add ingredient to meal</button>
         <button type="button" class="primary" (click)="saveMeal()" [disabled]="!currentMealName.trim()">
           {{ isEditingExistingMeal ? 'Update meal' : 'Save meal to history' }}
+        </button>
+        <button
+          type="button"
+          class="primary"
+          (click)="saveMealForYesterday()"
+          [disabled]="!currentMealName.trim()"
+          *ngIf="!isEditingExistingMeal"
+        >
+          Add to yesterday
         </button>
         <button type="button" (click)="cancelMeal()">Cancel</button>
       </div>
