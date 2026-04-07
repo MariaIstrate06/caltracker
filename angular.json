@@ -10,7 +10,6 @@
       "targets": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
-          "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/cal-track",
             "index": "src/index.html",
@@ -25,8 +24,7 @@
             "production": {
               "optimization": true,
               "outputHashing": "all",
-              "sourceMap": false,
-              "extractCss": true
+              "sourceMap": false
             }
           }
         },

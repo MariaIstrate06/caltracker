@@ -54,6 +54,11 @@ interface CalTrackState {
   customIngredients: IngredientTemplate[];
 }
 
+interface EditingMealDraft {
+  id: string;
+  name: string;
+}
+
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -68,6 +73,7 @@ export class AppComponent implements OnDestroy {
   currentMealName = '';
   currentIngredients: MealIngredient[] = [];
   mealHistory: MealEntry[] = [];
+  editingMeal: EditingMealDraft | null = null;
   customIngredients: IngredientTemplate[] = [];
   categories: IngredientCategory[] = ['Meat', 'Carb', 'Veggie', 'Other'];
   showMealBuilder = false;
@@ -644,6 +650,42 @@ export class AppComponent implements OnDestroy {
   private getDateKeyForOffset(offset: number) {
     const date = new Date(Date.now() - offset * 86400000);
     return date.toLocaleDateString('en-CA', { timeZone: 'Europe/Bucharest' });
+  }
+
+  startEditingMeal(meal: MealEntry) {
+    this.editingMeal = {
+      id: meal.id,
+      name: meal.name,
+    };
+  }
+
+  cancelEditingMeal() {
+    this.editingMeal = null;
+  }
+
+  saveMealEdit() {
+    if (!this.editingMeal) {
+      return;
+    }
+
+    const trimmedName = this.editingMeal.name.trim();
+    if (!trimmedName) {
+      return;
+    }
+
+    this.mealHistory = this.mealHistory.map((meal) =>
+      meal.id === this.editingMeal!.id ? { ...meal, name: trimmedName } : meal
+    );
+    this.editingMeal = null;
+    this.saveState();
+  }
+
+  deleteMeal(mealId: string) {
+    this.mealHistory = this.mealHistory.filter((meal) => meal.id !== mealId);
+    if (this.editingMeal?.id === mealId) {
+      this.editingMeal = null;
+    }
+    this.saveState();
   }
 
   saveState() {

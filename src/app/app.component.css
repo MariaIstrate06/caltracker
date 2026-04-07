@@ -650,6 +650,11 @@ button:disabled {
   display: flex;
   justify-content: space-between;
   gap: 14px;
+
+.history-actions .danger {
+  color: #b91c1c;
+  border-color: #fecaca;
+}
   padding: 16px;
   background: rgba(13, 29, 18, 0.96);
   border-radius: 18px;

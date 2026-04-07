@@ -303,4 +303,27 @@
       </div>
     </div>
   </div>
+
+    <section class="card stack history-actions" *ngIf="mealHistory.length > 0">
+      <div class="row space-between align-center">
+        <h2>Manage meals</h2>
+        <span class="muted">Edit names or remove entries</span>
+      </div>
+
+      <div class="stack" *ngFor="let meal of mealHistory">
+        <div class="row space-between align-center">
+          <strong>{{ meal.name }}</strong>
+          <div class="row gap-sm">
+            <button type="button" class="ghost" (click)="startEditingMeal(meal)">Edit</button>
+            <button type="button" class="ghost danger" (click)="deleteMeal(meal.id)">Delete</button>
+          </div>
+        </div>
+
+        <div class="row gap-sm" *ngIf="editingMeal?.id === meal.id">
+          <input type="text" [(ngModel)]="editingMeal!.name" placeholder="Meal name" />
+          <button type="button" class="ghost" (click)="saveMealEdit()">Save</button>
+          <button type="button" class="ghost" (click)="cancelEditingMeal()">Cancel</button>
+        </div>
+      </div>
+    </section>
 </div>
