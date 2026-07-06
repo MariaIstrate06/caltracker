@@ -1,18 +1,21 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { SyncStatus } from './models/sync.model';
 import { SyncService } from './services/sync.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, CommonModule],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule],
   template: `
-    <nav>
-      <a routerLink="/home">Home</a> | <a routerLink="/today">Today</a> |
-      <a routerLink="/browse">Browse</a> | <a routerLink="/drinks">Drinks</a> |
-      <a routerLink="/stats">Stats</a> | <a routerLink="/settings">Settings</a>
+    <nav class="nav">
+      <a routerLink="/home" routerLinkActive="active">Home</a>
+      <a routerLink="/today" routerLinkActive="active">Today</a>
+      <a routerLink="/browse" routerLinkActive="active">Browse</a>
+      <a routerLink="/drinks" routerLinkActive="active">Drinks</a>
+      <a routerLink="/stats" routerLinkActive="active">Stats</a>
+      <a routerLink="/settings" routerLinkActive="active">Settings</a>
       <span
         *ngIf="sync.status$ | async as status"
         [title]="statusTitle(status)"
@@ -22,7 +25,9 @@ import { SyncService } from './services/sync.service';
         {{ statusIcon(status.state) }}
       </span>
     </nav>
-    <router-outlet />
+    <main class="page">
+      <router-outlet />
+    </main>
   `,
 })
 export class AppComponent {

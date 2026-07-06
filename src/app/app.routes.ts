@@ -6,6 +6,15 @@ export const routes: Routes = [
   { path: 'today', loadComponent: () => import('./pages/today/today.component').then((m) => m.TodayComponent) },
   { path: 'browse', loadComponent: () => import('./pages/browse/browse.component').then((m) => m.BrowseComponent) },
   { path: 'drinks', loadComponent: () => import('./pages/drinks/drinks.component').then((m) => m.DrinksComponent) },
+  {
+    path: 'log-new-meal',
+    loadComponent: () => import('./pages/log-new-meal/log-new-meal.component').then((m) => m.LogNewMealComponent),
+  },
+  {
+    path: 'log-existing-meal',
+    loadComponent: () =>
+      import('./pages/log-existing-meal/log-existing-meal.component').then((m) => m.LogExistingMealComponent),
+  },
   { path: 'stats', loadComponent: () => import('./pages/stats/stats.component').then((m) => m.StatsComponent) },
   {
     path: 'settings',

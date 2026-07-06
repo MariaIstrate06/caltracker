@@ -37,6 +37,15 @@ export function computeDrinkTotals(drink: Pick<Drink, 'calories' | 'protein'>, q
   return { calories: drink.calories * quantity, protein: drink.protein * quantity };
 }
 
+/** Scales a snapshot of totals from one quantity to another (e.g. editing a logged "2x Beer" entry to 3x), without depending on the drink's current live definition. */
+export function rescaleQuantity(totals: MacroTotals, fromQuantity: number, toQuantity: number): MacroTotals {
+  if (fromQuantity <= 0) {
+    return ZERO_TOTALS;
+  }
+  const factor = toQuantity / fromQuantity;
+  return { calories: totals.calories * factor, protein: totals.protein * factor };
+}
+
 /** Sums the snapshot totals across a set of log entries (e.g. all entries for one day). */
 export function computeDayTotals(entries: Pick<DailyLogEntry, 'computedCalories' | 'computedProtein'>[]): MacroTotals {
   return entries.reduce<MacroTotals>(

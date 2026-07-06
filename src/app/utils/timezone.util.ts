@@ -17,3 +17,10 @@ export function getBucharestDateForTimestamp(timestamp: string | number | Date):
   const date = timestamp instanceof Date ? timestamp : new Date(timestamp);
   return dateKeyFormatter.format(date);
 }
+
+/** Shifts a yyyy-MM-dd date key by a whole number of days (negative to go back), for day-by-day navigation on Today. */
+export function shiftDateKey(dateKey: string, days: number): string {
+  const [year, month, day] = dateKey.split('-').map(Number);
+  const shifted = new Date(Date.UTC(year, month - 1, day + days));
+  return shifted.toISOString().slice(0, 10);
+}

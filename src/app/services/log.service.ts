@@ -27,6 +27,22 @@ export class LogService {
     return logEntry;
   }
 
+  /** Updates a log entry in place (e.g. editing its logged quantity) — never touches the underlying meal/drink definition. */
+  update(id: string, patch: Partial<Omit<DailyLogEntry, 'id' | 'profileId'>>): DailyLogEntry | undefined {
+    let updated: DailyLogEntry | undefined;
+    const all = this.getAll().map((entry) => {
+      if (entry.id !== id) {
+        return entry;
+      }
+      updated = { ...entry, ...patch, id, updatedAt: new Date().toISOString() };
+      return updated;
+    });
+    if (updated) {
+      this.saveAll(all);
+    }
+    return updated;
+  }
+
   deleteEntry(id: string): void {
     this.saveAll(this.getAll().filter((entry) => entry.id !== id));
   }
