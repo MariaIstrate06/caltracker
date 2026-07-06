@@ -17,4 +17,6 @@ export interface DailyLogEntry {
   /** Snapshot of computed totals at logging time — later edits to the underlying meal/drink/ingredient must not change these. */
   computedCalories: number;
   computedProtein: number;
+  /** ISO timestamp of last local write to this record; used for sync conflict resolution. */
+  updatedAt: string;
 }

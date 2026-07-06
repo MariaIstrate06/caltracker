@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Ingredient } from '../models';
+import { STORAGE_KEYS } from './storage-keys';
 import { StorageService } from './storage.service';
 
-const STORAGE_KEY = 'caltrack.ingredients';
+const STORAGE_KEY = STORAGE_KEYS.ingredients;
 
 @Injectable({ providedIn: 'root' })
 export class IngredientsService {

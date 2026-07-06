@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { DailyLogEntry } from '../models';
+import { STORAGE_KEYS } from './storage-keys';
 import { StorageService } from './storage.service';
 
-const STORAGE_KEY = 'caltrack.logEntries';
+const STORAGE_KEY = STORAGE_KEYS.logEntries;
 
 @Injectable({ providedIn: 'root' })
 export class LogService {
@@ -20,8 +21,8 @@ export class LogService {
     return this.getForProfile(profileId).filter((entry) => entry.date === date);
   }
 
-  addEntry(entry: Omit<DailyLogEntry, 'id'>): DailyLogEntry {
-    const logEntry: DailyLogEntry = { ...entry, id: crypto.randomUUID() };
+  addEntry(entry: Omit<DailyLogEntry, 'id' | 'updatedAt'>): DailyLogEntry {
+    const logEntry: DailyLogEntry = { ...entry, id: crypto.randomUUID(), updatedAt: new Date().toISOString() };
     this.saveAll([...this.getAll(), logEntry]);
     return logEntry;
   }

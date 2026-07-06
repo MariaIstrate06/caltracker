@@ -4,4 +4,5 @@ export interface Profile {
   emoji: string;
   dailyCalorieGoal: number;
   dailyProteinGoal: number;
+  updatedAt: string;
 }

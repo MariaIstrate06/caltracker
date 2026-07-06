@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Profile } from '../models';
+import { STORAGE_KEYS } from './storage-keys';
 import { StorageService } from './storage.service';
 
-const STORAGE_KEY = 'caltrack.profiles';
-const ACTIVE_PROFILE_KEY = 'caltrack.activeProfileId';
+const STORAGE_KEY = STORAGE_KEYS.profiles;
+const ACTIVE_PROFILE_KEY = STORAGE_KEYS.activeProfileId;
 
 @Injectable({ providedIn: 'root' })
 export class ProfilesService {
@@ -17,8 +18,8 @@ export class ProfilesService {
     return this.getAll().find((profile) => profile.id === id);
   }
 
-  create(input: Omit<Profile, 'id'>): Profile {
-    const profile: Profile = { ...input, id: crypto.randomUUID() };
+  create(input: Omit<Profile, 'id' | 'updatedAt'>): Profile {
+    const profile: Profile = { ...input, id: crypto.randomUUID(), updatedAt: new Date().toISOString() };
     this.saveAll([...this.getAll(), profile]);
     if (!this.getActiveProfileId()) {
       this.setActiveProfileId(profile.id);
@@ -36,7 +37,7 @@ export class ProfilesService {
       if (profile.id !== id) {
         return profile;
       }
-      updated = { ...profile, ...patch, id };
+      updated = { ...profile, ...patch, id, updatedAt: new Date().toISOString() };
       return updated;
     });
     if (updated) {
