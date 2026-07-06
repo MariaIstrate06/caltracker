@@ -630,6 +630,25 @@
       "updatedAt": "2026-07-06T22:03:03.563Z"
     }
   ],
-  "logEntries": [],
+  "logEntries": [
+    {
+      "profileId": "ac4cf7e1-1e2c-4ed4-97e7-df941864727c",
+      "date": "2026-07-07",
+      "type": "meal",
+      "refId": null,
+      "name": "Lipie (pita/flatbread)",
+      "itemsOverride": [
+        {
+          "ingredientId": "lipie",
+          "amountGrams": 75
+        }
+      ],
+      "timestamp": "2026-07-06T23:09:39.513Z",
+      "computedCalories": 206.25,
+      "computedProtein": 6.75,
+      "id": "aacb629e-3c89-48bf-b720-efa972c8121d",
+      "updatedAt": "2026-07-06T23:09:39.513Z"
+    }
+  ],
   "tombstones": {}
 }
