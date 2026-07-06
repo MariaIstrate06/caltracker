@@ -14,6 +14,7 @@ import { SyncService } from './services/sync.service';
       <a routerLink="/today" routerLinkActive="active">Today</a>
       <a routerLink="/browse" routerLinkActive="active">Browse</a>
       <a routerLink="/drinks" routerLinkActive="active">Drinks</a>
+      <a routerLink="/manage" routerLinkActive="active">Manage</a>
       <a routerLink="/stats" routerLinkActive="active">Stats</a>
       <a routerLink="/settings" routerLinkActive="active">Settings</a>
       <span

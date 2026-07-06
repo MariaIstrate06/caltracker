@@ -15,6 +15,7 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./pages/log-existing-meal/log-existing-meal.component').then((m) => m.LogExistingMealComponent),
   },
+  { path: 'manage', loadComponent: () => import('./pages/manage/manage.component').then((m) => m.ManageComponent) },
   { path: 'stats', loadComponent: () => import('./pages/stats/stats.component').then((m) => m.StatsComponent) },
   {
     path: 'settings',

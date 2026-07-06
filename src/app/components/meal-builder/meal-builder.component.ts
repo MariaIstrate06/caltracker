@@ -1,24 +1,32 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { IngredientFormComponent } from '../../components/ingredient-form/ingredient-form.component';
-import { Ingredient, MealItem } from '../../models';
+import { Ingredient, Meal, MealCategory, MealItem } from '../../models';
 import { IngredientsService } from '../../services/ingredients.service';
-import { LogService } from '../../services/log.service';
-import { ProfilesService } from '../../services/profiles.service';
+import { MealsService } from '../../services/meals.service';
 import { computeMealTotals, MacroTotals } from '../../utils/macro-calc.util';
-import { getBucharestToday } from '../../utils/timezone.util';
+import { IngredientFormComponent } from '../ingredient-form/ingredient-form.component';
 
+const CATEGORIES: MealCategory[] = ['breakfast', 'lunch', 'dinner', 'snack'];
+
+/**
+ * Name + category + ingredient-rows builder, shared across every way a Meal gets authored:
+ * - create from scratch: seedMeal=null, mode='create'
+ * - duplicate an existing meal: seedMeal=<source>, mode='create' (always saves as a NEW meal, source untouched)
+ * - edit a meal's stored definition: seedMeal=<target>, mode='edit' (saves in place, same id)
+ */
 @Component({
-  selector: 'app-log-new-meal',
+  selector: 'app-meal-builder',
   standalone: true,
   imports: [CommonModule, FormsModule, IngredientFormComponent],
   template: `
-    <h2>Log a new meal</h2>
+    <input class="search-input" placeholder="Meal name" [(ngModel)]="name" />
+
+    <select class="search-input" [(ngModel)]="category">
+      <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
+    </select>
 
     <input class="search-input" placeholder="Search ingredients…" [(ngModel)]="searchQuery" />
-
     <div class="result-list" *ngIf="filteredIngredients.length">
       <button class="result-item" *ngFor="let ingredient of filteredIngredients" (click)="addIngredientRow(ingredient)">
         <span>{{ ingredient.name }}</span>
@@ -27,11 +35,11 @@ import { getBucharestToday } from '../../utils/timezone.util';
     </div>
     <p *ngIf="searchQuery && !filteredIngredients.length" class="muted">No matches for "{{ searchQuery }}".</p>
 
-    <button class="btn btn-small" *ngIf="!showAddIngredientForm" (click)="showAddIngredientForm = true">+ Add new ingredient</button>
+    <button class="btn btn-small" *ngIf="!showAddIngredientForm" (click)="openAddIngredientForm()">+ Add new ingredient</button>
     <app-ingredient-form *ngIf="showAddIngredientForm" (saved)="onIngredientCreated($event)" (cancelled)="showAddIngredientForm = false" />
 
     <ng-container *ngIf="items.length">
-      <h3>This meal</h3>
+      <h3>Ingredients</h3>
       <div class="item-row" *ngFor="let item of items; let i = index">
         <span class="name">{{ ingredientName(item.ingredientId) }}</span>
         <input type="number" min="0" [(ngModel)]="item.amountGrams" />
@@ -43,34 +51,44 @@ import { getBucharestToday } from '../../utils/timezone.util';
         <span>{{ liveTotals.calories | number: '1.0-0' }} kcal</span>
         <span>{{ liveTotals.protein | number: '1.0-1' }} g protein</span>
       </div>
-
-      <input class="search-input" placeholder="Name this meal (optional)" [(ngModel)]="mealName" />
     </ng-container>
 
     <div class="btn-row">
-      <button class="btn btn-primary" (click)="confirm()" [disabled]="!items.length">Log this meal</button>
+      <button class="btn btn-primary" (click)="submit()" [disabled]="!items.length || !name.trim()">
+        {{ mode === 'edit' ? 'Save changes' : 'Save meal' }}
+      </button>
       <button class="btn" (click)="cancel()">Cancel</button>
     </div>
   `,
 })
-export class LogNewMealComponent implements OnInit {
-  searchQuery = '';
-  items: MealItem[] = [];
-  mealName = '';
+export class MealBuilderComponent implements OnInit, OnChanges {
+  /** Pre-fills the form. Used both for duplicating (mode='create') and editing (mode='edit'). Null means blank/from-scratch. */
+  @Input() seedMeal: Meal | null = null;
+  @Input() mode: 'create' | 'edit' = 'create';
+  @Output() saved = new EventEmitter<Meal>();
+  @Output() cancelled = new EventEmitter<void>();
 
+  categories = CATEGORIES;
+  name = '';
+  category: MealCategory = 'lunch';
+  items: MealItem[] = [];
+  searchQuery = '';
   showAddIngredientForm = false;
 
   private allIngredients: Ingredient[] = [];
 
   constructor(
     private ingredientsService: IngredientsService,
-    private logService: LogService,
-    private profilesService: ProfilesService,
-    private router: Router
+    private mealsService: MealsService
   ) {}
 
   ngOnInit(): void {
     this.allIngredients = this.ingredientsService.getAll();
+    this.applySeed();
+  }
+
+  ngOnChanges(): void {
+    this.applySeed();
   }
 
   get filteredIngredients(): Ingredient[] {
@@ -98,44 +116,45 @@ export class LogNewMealComponent implements OnInit {
     this.items = this.items.filter((_, i) => i !== index);
   }
 
+  openAddIngredientForm(): void {
+    this.showAddIngredientForm = true;
+  }
+
   onIngredientCreated(ingredient: Ingredient): void {
     this.allIngredients = [...this.allIngredients, ingredient];
     this.addIngredientRow(ingredient);
     this.showAddIngredientForm = false;
   }
 
-  confirm(): void {
-    if (!this.items.length) {
+  submit(): void {
+    const trimmedName = this.name.trim();
+    if (!trimmedName || !this.items.length) {
       return;
     }
-    const profile = this.profilesService.getActiveProfile();
-    if (!profile) {
+    const input = { name: trimmedName, category: this.category, items: this.items };
+    if (this.mode === 'edit' && this.seedMeal) {
+      const updated = this.mealsService.update(this.seedMeal.id, input);
+      if (updated) {
+        this.saved.emit(updated);
+      }
       return;
     }
-    const totals = this.liveTotals;
-    this.logService.addEntry({
-      profileId: profile.id,
-      date: getBucharestToday(),
-      type: 'meal',
-      refId: null,
-      name: this.mealName.trim() || this.buildDefaultName(),
-      itemsOverride: this.items,
-      timestamp: new Date().toISOString(),
-      computedCalories: totals.calories,
-      computedProtein: totals.protein,
-    });
-    this.router.navigateByUrl('/today');
+    this.saved.emit(this.mealsService.create(input));
   }
 
   cancel(): void {
-    this.router.navigateByUrl('/home');
+    this.cancelled.emit();
   }
 
-  private buildDefaultName(): string {
-    const names = this.items.map((item) => this.ingredientName(item.ingredientId));
-    if (names.length <= 2) {
-      return names.join(', ') || 'Meal';
+  private applySeed(): void {
+    if (this.seedMeal) {
+      this.name = this.mode === 'edit' ? this.seedMeal.name : `${this.seedMeal.name} (copy)`;
+      this.category = this.seedMeal.category;
+      this.items = this.seedMeal.items.map((item) => ({ ...item }));
+    } else {
+      this.name = '';
+      this.category = 'lunch';
+      this.items = [];
     }
-    return `${names.slice(0, 2).join(', ')} +${names.length - 2}`;
   }
 }
