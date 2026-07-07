@@ -631,7 +631,29 @@
       "updatedAt": "2026-07-06T22:03:03.563Z"
     }
   ],
-  "logEntries": [],
+  "logEntries": [
+    {
+      "profileId": "da43035c-935b-4b52-82f1-85c6a6d377ef",
+      "date": "2026-07-07",
+      "type": "meal",
+      "refId": "beef-airfried-potatoes",
+      "itemsOverride": [
+        {
+          "ingredientId": "ground-beef-lean-5",
+          "amountGrams": 200
+        },
+        {
+          "ingredientId": "potato-raw",
+          "amountGrams": 250
+        }
+      ],
+      "timestamp": "2026-07-07T07:26:03.122Z",
+      "computedCalories": 466.5,
+      "computedProtein": 47,
+      "id": "131b56ed-3ec1-4bcc-8fd2-7bcde95995a1",
+      "updatedAt": "2026-07-07T07:26:03.122Z"
+    }
+  ],
   "tombstones": {
     "aacb629e-3c89-48bf-b720-efa972c8121d": "2026-07-07T07:24:47.781Z",
     "4e10b833-74da-4acd-bd43-a1ad854c6621": "2026-07-07T07:24:47.781Z",
