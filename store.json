@@ -237,6 +237,13 @@
       "caloriesPer100g": 342,
       "proteinPer100g": 5.9,
       "updatedAt": "2026-07-06T22:03:03.563Z"
+    },
+    {
+      "name": "Egg",
+      "caloriesPer100g": 76,
+      "proteinPer100g": 6.3,
+      "id": "dcc61c2b-c6e0-4958-bfda-9a8b57499d61",
+      "updatedAt": "2026-07-07T08:17:14.580Z"
     }
   ],
   "meals": [
