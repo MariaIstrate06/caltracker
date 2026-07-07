@@ -817,6 +817,36 @@
       "computedProtein": 0.3,
       "id": "845f3d3f-c662-4a22-baae-a5ebdaeb8226",
       "updatedAt": "2026-07-07T19:07:43.004Z"
+    },
+    {
+      "profileId": "da43035c-935b-4b52-82f1-85c6a6d377ef",
+      "date": "2026-07-07",
+      "type": "meal",
+      "refId": null,
+      "name": "Bacon fried egg with avocado and tomato",
+      "itemsOverride": [
+        {
+          "ingredientId": "43eea9ad-d9b9-4463-b3ac-4a094c2b2741",
+          "amountGrams": 55
+        },
+        {
+          "ingredientId": "avocado",
+          "amountGrams": 100
+        },
+        {
+          "ingredientId": "dcc61c2b-c6e0-4958-bfda-9a8b57499d61",
+          "amountGrams": 200
+        },
+        {
+          "ingredientId": "tomato",
+          "amountGrams": 100
+        }
+      ],
+      "timestamp": "2026-07-07T19:39:45.541Z",
+      "computedCalories": 444.95,
+      "computedProtein": 23.75,
+      "id": "a386f6d3-b84d-4245-b0d0-664f5bd4ed8c",
+      "updatedAt": "2026-07-07T19:39:45.541Z"
     }
   ],
   "tombstones": {
