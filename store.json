@@ -286,6 +286,13 @@
       "proteinPer100g": 6.7,
       "id": "5df5466a-e7b9-4c4a-a0cd-9d5d3bfdbb31",
       "updatedAt": "2026-07-07T19:07:21.794Z"
+    },
+    {
+      "name": "salam",
+      "caloriesPer100g": 100,
+      "proteinPer100g": 0,
+      "id": "ad6e788c-32f0-48b0-a054-fb59c61e0dde",
+      "updatedAt": "2026-07-07T19:34:29.631Z"
     }
   ],
   "meals": [
