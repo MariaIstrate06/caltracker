@@ -258,6 +258,13 @@
       "proteinPer100g": 15,
       "id": "43eea9ad-d9b9-4463-b3ac-4a094c2b2741",
       "updatedAt": "2026-07-07T09:28:02.743Z"
+    },
+    {
+      "name": "Salami Pizza",
+      "caloriesPer100g": 250,
+      "proteinPer100g": 250,
+      "id": "ac1343e3-4189-4642-8e51-bc44c844819c",
+      "updatedAt": "2026-07-07T17:37:06.673Z"
     }
   ],
   "meals": [
