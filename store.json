@@ -685,32 +685,6 @@
       "date": "2026-07-07",
       "type": "meal",
       "refId": null,
-      "name": "Eggs Bacon",
-      "itemsOverride": [
-        {
-          "ingredientId": "dcc61c2b-c6e0-4958-bfda-9a8b57499d61",
-          "amountGrams": 200
-        },
-        {
-          "ingredientId": "890ce582-6239-4d50-9928-c653c74286e5",
-          "amountGrams": 30
-        },
-        {
-          "ingredientId": "avocado",
-          "amountGrams": 100
-        }
-      ],
-      "timestamp": "2026-07-07T08:19:02.280Z",
-      "computedCalories": 474,
-      "computedProtein": 25.7,
-      "id": "2a37ec42-fabc-43ff-a20b-2e919e902c2c",
-      "updatedAt": "2026-07-07T08:19:02.280Z"
-    },
-    {
-      "profileId": "da43035c-935b-4b52-82f1-85c6a6d377ef",
-      "date": "2026-07-07",
-      "type": "meal",
-      "refId": null,
       "name": "Kaiser Kaufland, Avocado +2",
       "itemsOverride": [
         {
@@ -741,6 +715,7 @@
     "aacb629e-3c89-48bf-b720-efa972c8121d": "2026-07-07T07:24:47.781Z",
     "4e10b833-74da-4acd-bd43-a1ad854c6621": "2026-07-07T07:24:47.781Z",
     "ac4cf7e1-1e2c-4ed4-97e7-df941864727c": "2026-07-07T07:25:12.688Z",
-    "131b56ed-3ec1-4bcc-8fd2-7bcde95995a1": "2026-07-07T10:02:17.552Z"
+    "131b56ed-3ec1-4bcc-8fd2-7bcde95995a1": "2026-07-07T10:02:17.552Z",
+    "2a37ec42-fabc-43ff-a20b-2e919e902c2c": "2026-07-07T10:17:30.984Z"
   }
 }
