@@ -1,13 +1,5 @@
 {
-  "profiles": [
-    {
-      "name": "jjj",
-      "emoji": "🙂",
-      "dailyCalorieGoal": 2000,
-      "dailyProteinGoal": 120,
-      "id": "ac4cf7e1-1e2c-4ed4-97e7-df941864727c"
-    }
-  ],
+  "profiles": [],
   "ingredients": [
     {
       "id": "chicken-breast-raw",
@@ -633,6 +625,7 @@
   "logEntries": [],
   "tombstones": {
     "aacb629e-3c89-48bf-b720-efa972c8121d": "2026-07-07T07:24:47.781Z",
-    "4e10b833-74da-4acd-bd43-a1ad854c6621": "2026-07-07T07:24:47.781Z"
+    "4e10b833-74da-4acd-bd43-a1ad854c6621": "2026-07-07T07:24:47.781Z",
+    "ac4cf7e1-1e2c-4ed4-97e7-df941864727c": "2026-07-07T07:25:12.688Z"
   }
 }
