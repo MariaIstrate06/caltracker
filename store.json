@@ -251,6 +251,13 @@
       "proteinPer100g": 37,
       "id": "890ce582-6239-4d50-9928-c653c74286e5",
       "updatedAt": "2026-07-07T08:18:28.771Z"
+    },
+    {
+      "name": "Kaiser Kaufland",
+      "caloriesPer100g": 209,
+      "proteinPer100g": 15,
+      "id": "43eea9ad-d9b9-4463-b3ac-4a094c2b2741",
+      "updatedAt": "2026-07-07T09:28:02.743Z"
     }
   ],
   "meals": [
