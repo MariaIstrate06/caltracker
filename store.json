@@ -298,7 +298,7 @@
   "meals": [
     {
       "id": "shaorma",
-      "name": "Shaorma",
+      "name": "Shaorma Class",
       "category": "lunch",
       "items": [
         {
@@ -326,7 +326,7 @@
           "amountGrams": 60
         }
       ],
-      "updatedAt": "2026-07-07T19:33:55.920Z",
+      "updatedAt": "2026-07-07T19:36:03.802Z",
       "icon": "🌯"
     },
     {
