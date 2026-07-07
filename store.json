@@ -1,5 +1,14 @@
 {
-  "profiles": [],
+  "profiles": [
+    {
+      "name": "Istrate",
+      "emoji": "😎",
+      "dailyCalorieGoal": 1700,
+      "dailyProteinGoal": 140,
+      "id": "da43035c-935b-4b52-82f1-85c6a6d377ef",
+      "updatedAt": "2026-07-07T07:25:29.913Z"
+    }
+  ],
   "ingredients": [
     {
       "id": "chicken-breast-raw",
