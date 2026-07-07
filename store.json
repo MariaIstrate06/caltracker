@@ -810,24 +810,6 @@
       "computedProtein": 0.3,
       "id": "845f3d3f-c662-4a22-baae-a5ebdaeb8226",
       "updatedAt": "2026-07-07T19:07:43.004Z"
-    },
-    {
-      "profileId": "da43035c-935b-4b52-82f1-85c6a6d377ef",
-      "date": "2026-07-07",
-      "type": "meal",
-      "refId": null,
-      "name": "111 meal",
-      "itemsOverride": [
-        {
-          "ingredientId": "ad6e788c-32f0-48b0-a054-fb59c61e0dde",
-          "amountGrams": 100
-        }
-      ],
-      "timestamp": "2026-07-07T19:34:40.265Z",
-      "computedCalories": 100,
-      "computedProtein": 0,
-      "id": "4586c854-42b9-4731-823c-3515a599fab4",
-      "updatedAt": "2026-07-07T19:34:40.265Z"
     }
   ],
   "tombstones": {
@@ -836,6 +818,7 @@
     "ac4cf7e1-1e2c-4ed4-97e7-df941864727c": "2026-07-07T07:25:12.688Z",
     "131b56ed-3ec1-4bcc-8fd2-7bcde95995a1": "2026-07-07T10:02:17.552Z",
     "2a37ec42-fabc-43ff-a20b-2e919e902c2c": "2026-07-07T10:17:30.984Z",
-    "e2afe648-7abd-46d4-89cc-aa85872e39e0": "2026-07-07T19:08:04.064Z"
+    "e2afe648-7abd-46d4-89cc-aa85872e39e0": "2026-07-07T19:08:04.064Z",
+    "4586c854-42b9-4731-823c-3515a599fab4": "2026-07-07T19:35:07.718Z"
   }
 }
