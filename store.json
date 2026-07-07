@@ -643,6 +643,13 @@
       "protein": 2.5,
       "servingNote": "estimate, ~120ml",
       "updatedAt": "2026-07-06T22:03:03.563Z"
+    },
+    {
+      "name": "Gin & Tonic",
+      "calories": 220,
+      "protein": 0,
+      "id": "81dc1fc6-7e12-4cbe-93f6-7dfd8c9d42d9",
+      "updatedAt": "2026-07-07T08:20:18.809Z"
     }
   ],
   "logEntries": [
