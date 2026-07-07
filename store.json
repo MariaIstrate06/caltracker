@@ -279,6 +279,13 @@
       "proteinPer100g": 0,
       "id": "761fa029-9747-4298-9966-e16a4f654867",
       "updatedAt": "2026-07-07T19:06:48.497Z"
+    },
+    {
+      "name": "Chickpeas",
+      "caloriesPer100g": 127,
+      "proteinPer100g": 6.7,
+      "id": "5df5466a-e7b9-4c4a-a0cd-9d5d3bfdbb31",
+      "updatedAt": "2026-07-07T19:07:21.794Z"
     }
   ],
   "meals": [
