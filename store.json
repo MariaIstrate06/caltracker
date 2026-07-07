@@ -735,6 +735,24 @@
       "computedProtein": 1.8,
       "id": "27e6c445-26f1-44af-a9af-24c7c23905fe",
       "updatedAt": "2026-07-07T16:06:54.264Z"
+    },
+    {
+      "profileId": "da43035c-935b-4b52-82f1-85c6a6d377ef",
+      "date": "2026-07-07",
+      "type": "meal",
+      "refId": null,
+      "name": "Salami Pizza",
+      "itemsOverride": [
+        {
+          "ingredientId": "0613f9ab-e6c9-4d3a-93db-4f480cfb7fcb",
+          "amountGrams": 250
+        }
+      ],
+      "timestamp": "2026-07-07T17:38:35.647Z",
+      "computedCalories": 625,
+      "computedProtein": 32.5,
+      "id": "2c9001b2-6f8e-464f-a31a-267311e88af3",
+      "updatedAt": "2026-07-07T17:38:35.647Z"
     }
   ],
   "tombstones": {
