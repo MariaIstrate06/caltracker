@@ -737,36 +737,6 @@
     {
       "profileId": "da43035c-935b-4b52-82f1-85c6a6d377ef",
       "date": "2026-07-07",
-      "type": "meal",
-      "refId": null,
-      "name": "Kaiser Kaufland, Avocado +2",
-      "itemsOverride": [
-        {
-          "ingredientId": "43eea9ad-d9b9-4463-b3ac-4a094c2b2741",
-          "amountGrams": 55
-        },
-        {
-          "ingredientId": "avocado",
-          "amountGrams": 100
-        },
-        {
-          "ingredientId": "dcc61c2b-c6e0-4958-bfda-9a8b57499d61",
-          "amountGrams": 200
-        },
-        {
-          "ingredientId": "tomato",
-          "amountGrams": 100
-        }
-      ],
-      "timestamp": "2026-07-07T09:37:29.707Z",
-      "computedCalories": 444.95,
-      "computedProtein": 23.75,
-      "id": "0586efee-4adc-43b7-ac0e-90a0c362b647",
-      "updatedAt": "2026-07-07T19:08:47.822Z"
-    },
-    {
-      "profileId": "da43035c-935b-4b52-82f1-85c6a6d377ef",
-      "date": "2026-07-07",
       "type": "drink",
       "refId": "beer",
       "quantity": 1,
@@ -856,6 +826,7 @@
     "131b56ed-3ec1-4bcc-8fd2-7bcde95995a1": "2026-07-07T10:02:17.552Z",
     "2a37ec42-fabc-43ff-a20b-2e919e902c2c": "2026-07-07T10:17:30.984Z",
     "e2afe648-7abd-46d4-89cc-aa85872e39e0": "2026-07-07T19:08:04.064Z",
-    "4586c854-42b9-4731-823c-3515a599fab4": "2026-07-07T19:35:07.718Z"
+    "4586c854-42b9-4731-823c-3515a599fab4": "2026-07-07T19:35:07.718Z",
+    "0586efee-4adc-43b7-ac0e-90a0c362b647": "2026-07-07T19:40:04.939Z"
   }
 }
