@@ -13,7 +13,7 @@ import { getBucharestToday } from '../../utils/timezone.util';
   standalone: true,
   imports: [CommonModule, RouterLink],
   template: `
-    <h2>Quick-add a drink</h2>
+    <h2>Add a drink</h2>
 
     <div *ngIf="!activeProfile" class="empty-state">
       No active profile yet. <a routerLink="/settings">Go to Settings</a> to create one.
@@ -25,14 +25,16 @@ import { getBucharestToday } from '../../utils/timezone.util';
           <strong>{{ drink.name }}</strong>
           <small>{{ drink.calories }} kcal · {{ remainingFor(drink) }} left today</small>
         </div>
-        <div class="stepper">
-          <button (click)="changeQuantity(drink, -1)">-</button>
-          <span>{{ quantityFor(drink) }}</span>
-          <button (click)="changeQuantity(drink, 1)">+</button>
+        <div class="entry-actions">
+          <div class="stepper">
+            <button (click)="changeQuantity(drink, -1)">-</button>
+            <span>{{ quantityFor(drink) }}</span>
+            <button (click)="changeQuantity(drink, 1)">+</button>
+          </div>
+          <button class="btn btn-drink btn-small" (click)="logDrink(drink)">
+            {{ justLoggedId === drink.id ? 'Logged ✓' : 'Log ' + quantityFor(drink) + 'x' }}
+          </button>
         </div>
-        <button class="btn btn-drink btn-small" (click)="logDrink(drink)">
-          {{ justLoggedId === drink.id ? 'Logged ✓' : 'Log ' + quantityFor(drink) + 'x' }}
-        </button>
       </div>
     </div>
   `,

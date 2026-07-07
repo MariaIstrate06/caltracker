@@ -52,10 +52,12 @@ interface EntryView {
               <small *ngIf="view.entry.type === 'drink'">{{ view.entry.quantity ?? 1 }}x</small>
               <small *ngIf="view.entry.type === 'meal'">{{ view.entry.timestamp | date: 'HH:mm' }}</small>
             </div>
-            <div class="entry-macros">{{ view.calories | number: '1.0-0' }} kcal · {{ view.protein | number: '1.0-1' }} g</div>
-            <div class="btn-row">
-              <button class="btn btn-small" (click)="startEdit(view)">Edit</button>
-              <button class="btn btn-small btn-danger" (click)="remove(view)">Remove</button>
+            <div class="entry-side">
+              <div class="entry-macros">{{ view.calories | number: '1.0-0' }} kcal · {{ view.protein | number: '1.0-1' }} g</div>
+              <div class="btn-row">
+                <button class="btn btn-small" (click)="startEdit(view)">Edit</button>
+                <button class="btn btn-small btn-danger" (click)="remove(view)">Remove</button>
+              </div>
             </div>
           </ng-container>
 

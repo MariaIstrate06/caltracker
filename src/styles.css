@@ -5,24 +5,26 @@
 :root {
   color-scheme: dark;
   --font-sans: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', 'Roboto Mono', Menlo, Consolas, monospace;
+  --font-mono: 'Fira Code', 'Source Code Pro', ui-monospace, 'SF Mono', 'Cascadia Code', 'Roboto Mono', Menlo, Consolas,
+    monospace;
 
-  /* Deep near-black base, not just dark grey */
-  --bg: #05060a;
-  --surface: rgba(255, 255, 255, 0.045);
-  --surface-raised: rgba(255, 255, 255, 0.07);
-  --border: rgba(255, 255, 255, 0.09);
-  --border-strong: rgba(255, 255, 255, 0.16);
-  --text: #eef0f6;
-  --text-muted: #8991a3;
+  /* Matches mariaistrate06.github.io/portfolio — near-black + terminal green */
+  --bg: #171717;
+  --surface: rgba(126, 217, 87, 0.05);
+  --surface-raised: rgba(126, 217, 87, 0.088);
+  --border: rgba(126, 217, 87, 0.16);
+  --border-strong: rgba(126, 217, 87, 0.3);
+  --text: #f8f4ec;
+  --text-muted: #9a9c8e;
 
   /* Validated palette (dataviz skill: CVD-checked against this exact --bg) */
-  --accent: #7c5cff; /* primary neon — buttons, active states, progress, links */
-  --accent-drink: #e0316b; /* drinks quick-add */
-  --status-good: #0fa07f; /* at/under goal */
-  --status-over: #d0692e; /* over goal — warm, not punishing */
-  --status-none: #454c5c; /* no data logged — neutral, never colored like a result */
-  --danger: #e2554a;
+  --accent: #7ed957; /* brand green — buttons, glow, nav, decorative */
+  --accent-deep: #22a866; /* CVD-safe deep green for small comparative fills (calendar/chart) */
+  --accent-protein: #a64ac9; /* protein ring — adapted from the portfolio's shadow-purple */
+  --status-good: var(--accent-deep); /* at/under goal */
+  --status-over: #d0692e; /* over goal — warm, not punishing; validated against --accent-deep */
+  --status-none: #454940; /* no data logged — neutral, never colored like a result */
+  --danger: #ca1515;
 
   font-family: var(--font-sans);
   background: var(--bg);
@@ -48,9 +50,9 @@ body {
   margin: 0;
   min-height: 100vh;
   background:
-    radial-gradient(ellipse 60% 40% at 15% 0%, rgba(124, 92, 255, 0.16), transparent 60%),
-    radial-gradient(ellipse 50% 35% at 100% 10%, rgba(224, 49, 107, 0.1), transparent 60%),
-    radial-gradient(ellipse 60% 50% at 50% 100%, rgba(15, 160, 127, 0.08), transparent 60%), var(--bg);
+    radial-gradient(ellipse 60% 40% at 15% 0%, rgba(126, 217, 87, 0.16), transparent 60%),
+    radial-gradient(ellipse 50% 35% at 100% 10%, rgba(166, 74, 201, 0.1), transparent 60%),
+    radial-gradient(ellipse 60% 50% at 50% 100%, rgba(34, 168, 102, 0.09), transparent 60%), var(--bg);
   background-attachment: fixed;
   color: var(--text);
   -webkit-font-smoothing: antialiased;
@@ -88,9 +90,9 @@ select {
   align-items: center;
   justify-content: space-between;
   padding: max(10px, env(safe-area-inset-top)) 16px 10px;
-  background: rgba(8, 9, 14, 0.72);
-  backdrop-filter: blur(18px) saturate(140%);
-  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  background: rgba(12, 14, 11, 0.7);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
   border-bottom: 1px solid var(--border);
 }
 
@@ -102,6 +104,8 @@ select {
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 .top-bar-actions {
@@ -123,6 +127,8 @@ select {
   text-decoration: none;
   font-size: 1.05rem;
   cursor: pointer;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   transition:
     transform 0.15s ease,
     border-color 0.15s ease,
@@ -132,7 +138,7 @@ select {
 .icon-btn:hover,
 .icon-btn.active {
   border-color: var(--border-strong);
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(126, 217, 87, 0.14);
 }
 
 .icon-btn:active {
@@ -154,18 +160,18 @@ select {
 }
 
 .sync-synced {
-  box-shadow: 0 0 10px 1px rgba(15, 160, 127, 0.55);
+  box-shadow: 0 0 10px 1px rgba(34, 168, 102, 0.55);
   border-color: var(--status-good);
 }
 
 .sync-syncing {
-  box-shadow: 0 0 10px 1px rgba(124, 92, 255, 0.5);
+  box-shadow: 0 0 10px 1px rgba(126, 217, 87, 0.5);
   border-color: var(--accent);
   animation: pulse 1.2s ease-in-out infinite;
 }
 
 .sync-error {
-  box-shadow: 0 0 10px 1px rgba(226, 85, 74, 0.6);
+  box-shadow: 0 0 10px 1px rgba(202, 21, 21, 0.6);
   border-color: var(--danger);
   cursor: pointer;
 }
@@ -214,9 +220,9 @@ select {
   z-index: 30;
   display: flex;
   padding-bottom: env(safe-area-inset-bottom);
-  background: rgba(8, 9, 14, 0.78);
-  backdrop-filter: blur(20px) saturate(140%);
-  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  background: rgba(12, 14, 11, 0.76);
+  backdrop-filter: blur(26px) saturate(160%);
+  -webkit-backdrop-filter: blur(26px) saturate(160%);
   border-top: 1px solid var(--border);
 }
 
@@ -255,7 +261,7 @@ select {
   filter: none;
   opacity: 1;
   transform: translateY(-2px);
-  text-shadow: 0 0 12px rgba(124, 92, 255, 0.8);
+  text-shadow: 0 0 12px rgba(126, 217, 87, 0.85);
 }
 
 .bottom-tabs a:active {
@@ -274,7 +280,7 @@ h3 {
   color: var(--text);
 }
 
-/* ===== Surfaces ===== */
+/* ===== Surfaces (glassmorphism) ===== */
 
 .card {
   background: var(--surface);
@@ -282,10 +288,13 @@ h3 {
   border-radius: 18px;
   padding: 18px;
   margin-bottom: 16px;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  background-image: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  backdrop-filter: blur(22px) saturate(150%);
+  -webkit-backdrop-filter: blur(22px) saturate(150%);
+  box-shadow:
+    0 8px 28px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  background-image: linear-gradient(rgba(126, 217, 87, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(126, 217, 87, 0.04) 1px, transparent 1px);
   background-size: 22px 22px;
 }
 
@@ -308,8 +317,11 @@ h3 {
   border-radius: 18px;
   padding: 22px 16px;
   text-align: center;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(22px) saturate(150%);
+  -webkit-backdrop-filter: blur(22px) saturate(150%);
+  box-shadow:
+    0 8px 28px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 .stat-value {
@@ -318,7 +330,7 @@ h3 {
   font-weight: 700;
   line-height: 1.1;
   color: var(--text);
-  text-shadow: 0 0 18px rgba(124, 92, 255, 0.35);
+  text-shadow: 0 0 18px rgba(126, 217, 87, 0.4);
 }
 
 .stat-label {
@@ -343,36 +355,84 @@ h3 {
   font-variant-numeric: tabular-nums;
 }
 
-/* ===== Progress ===== */
+/* ===== Progress rings (Home) — Apple Watch-style, outer = calories, inner = protein ===== */
 
-.progress-track {
-  width: 100%;
-  height: 8px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.07);
-  overflow: hidden;
-  margin-top: 10px;
+.rings-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  padding: 26px 16px;
 }
 
-.progress-fill {
-  height: 100%;
-  border-radius: 999px;
-  background: linear-gradient(90deg, var(--accent), #a78bff);
-  box-shadow: 0 0 10px 1px rgba(124, 92, 255, 0.6);
-  transition: width 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+.rings {
+  width: 168px;
+  height: 168px;
+  display: block;
 }
 
-.progress-fill.progress-over {
-  background: linear-gradient(90deg, var(--status-over), #e8985c);
-  box-shadow: 0 0 10px 1px rgba(208, 105, 46, 0.55);
+.ring-track {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.08);
+}
+
+.ring-track-protein {
+  stroke: rgba(255, 255, 255, 0.06);
+}
+
+.ring-fill {
+  fill: none;
+  stroke: var(--accent);
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 6px rgba(126, 217, 87, 0.65));
+  transition:
+    stroke-dashoffset 0.8s cubic-bezier(0.2, 0.8, 0.2, 1),
+    stroke 0.3s ease;
+}
+
+.ring-fill.ring-over {
+  stroke: var(--status-over);
+  filter: drop-shadow(0 0 6px rgba(208, 105, 46, 0.65));
+}
+
+.ring-fill-protein {
+  stroke: var(--accent-protein);
+  filter: drop-shadow(0 0 6px rgba(166, 74, 201, 0.6));
+}
+
+.rings-legend {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.rings-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.92rem;
+  color: var(--text-muted);
+}
+
+.rings-legend-item strong {
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  color: var(--text);
+  font-weight: 700;
 }
 
 /* ===== Buttons ===== */
 
 .actions {
   display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 10px;
   margin-top: 16px;
+}
+
+.actions-full {
+  grid-column: 1 / -1;
 }
 
 .btn {
@@ -388,6 +448,8 @@ h3 {
   cursor: pointer;
   text-align: center;
   text-decoration: none;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   transition:
     transform 0.12s ease,
     border-color 0.15s ease,
@@ -409,17 +471,17 @@ h3 {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--accent), #6a4ce0);
+  background: linear-gradient(135deg, var(--accent), #5fc93f);
   border-color: var(--accent);
-  color: white;
-  box-shadow: 0 0 18px rgba(124, 92, 255, 0.35);
+  color: #10140d;
+  box-shadow: 0 0 18px rgba(126, 217, 87, 0.4);
 }
 
 .btn-drink {
-  background: linear-gradient(135deg, var(--accent-drink), #b8265a);
-  border-color: var(--accent-drink);
-  color: white;
-  box-shadow: 0 0 18px rgba(224, 49, 107, 0.35);
+  background: linear-gradient(135deg, var(--accent), #5fc93f);
+  border-color: var(--accent);
+  color: #10140d;
+  box-shadow: 0 0 18px rgba(126, 217, 87, 0.4);
 }
 
 .btn-danger {
@@ -441,25 +503,43 @@ h3 {
   gap: 8px;
 }
 
-/* ===== Entry lists (Today) ===== */
+/* ===== Entry lists (Today / Manage) ===== */
 
 .entry-list {
   display: grid;
   gap: 10px;
 }
 
+/* Always a vertical stack — info block, then one full-width controls row. The page
+   column tops out at 640px anyway, so there's no width where cramming info + buttons
+   onto one line actually helps; stacking unconditionally removes the whole class of
+   "wraps awkwardly at some in-between width" bugs instead of chasing more breakpoints. */
 .entry-row {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: stretch;
   gap: 12px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 16px;
   padding: 14px 16px;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(22px) saturate(150%);
+  -webkit-backdrop-filter: blur(22px) saturate(150%);
+  box-shadow:
+    0 8px 28px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.entry-row > .btn-row,
+.entry-row > .entry-side,
+.entry-row > .entry-actions {
+  width: 100%;
+}
+
+.entry-row > .btn-row > .btn,
+.entry-row > .entry-side > .btn-row > .btn,
+.entry-row > .entry-actions > .btn {
+  flex: 1;
 }
 
 .entry-info strong {
@@ -470,11 +550,31 @@ h3 {
   color: var(--text-muted);
 }
 
-.entry-macros {
+/* Macros + actions form one column, right-aligned, so the numbers land in a consistent
+   spot next to the buttons instead of drifting based on how long the entry's name is. */
+.entry-side {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.entry-side .entry-macros {
   text-align: right;
+}
+
+.entry-macros {
   white-space: nowrap;
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
+}
+
+/* A row of mixed controls below the info block (e.g. a quantity stepper + one action
+   button) — the stepper stays compact, any .btn inside shares the remaining width. */
+.entry-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .day-nav {
@@ -504,7 +604,7 @@ h3 {
 .inline-form input:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.2);
+  box-shadow: 0 0 0 3px rgba(126, 217, 87, 0.22);
 }
 
 .result-list {
@@ -524,6 +624,8 @@ h3 {
   cursor: pointer;
   text-align: left;
   width: 100%;
+  backdrop-filter: blur(18px) saturate(150%);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
   transition:
     border-color 0.15s ease,
     transform 0.12s ease;
@@ -598,6 +700,8 @@ h3 {
   border-radius: 12px;
   margin: 12px 0;
   font-weight: 600;
+  backdrop-filter: blur(18px) saturate(150%);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
 }
 
 .totals-bar span {
@@ -612,6 +716,8 @@ h3 {
   border-radius: 18px;
   color: var(--text-muted);
   text-align: center;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
 }
 
 .inline-form {
@@ -622,6 +728,9 @@ h3 {
   border: 1px solid var(--border);
   border-radius: 14px;
   margin-bottom: 12px;
+  backdrop-filter: blur(18px) saturate(150%);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 .inline-form input[type='number'] {
@@ -674,9 +783,9 @@ h3 {
 }
 
 .calendar-day-good {
-  background: color-mix(in srgb, var(--status-good) 26%, var(--surface-raised));
+  background: color-mix(in srgb, var(--status-good) 28%, var(--surface-raised));
   border-color: var(--status-good);
-  color: #b6f2e1;
+  color: #cdf0a8;
 }
 
 .calendar-day-over {
@@ -716,7 +825,7 @@ h3 {
 
 .legend-good {
   background: var(--status-good);
-  box-shadow: 0 0 6px rgba(15, 160, 127, 0.7);
+  box-shadow: 0 0 6px rgba(34, 168, 102, 0.7);
 }
 
 .legend-over {
@@ -771,4 +880,55 @@ h3 {
 
 .field input[size='3'] {
   width: 48px;
+}
+
+/* ===== Home greeting ===== */
+
+.greeting-question {
+  display: block;
+  color: var(--text-muted);
+  font-size: 1rem;
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+/* ===== Drinks availability grid (Home) ===== */
+
+.drinks-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+  gap: 10px;
+}
+
+.drink-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 14px 8px;
+  border-radius: 14px;
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  text-align: center;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transition: transform 0.12s ease;
+}
+
+.drink-chip:active {
+  transform: scale(0.97);
+}
+
+.drink-chip-count {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--accent);
+  text-shadow: 0 0 10px rgba(126, 217, 87, 0.45);
+}
+
+.drink-chip-name {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  line-height: 1.25;
 }

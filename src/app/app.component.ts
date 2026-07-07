@@ -11,7 +11,7 @@ import { SyncService } from './services/sync.service';
   template: `
     <div class="app-shell">
       <header class="top-bar">
-        <span class="brand">CalTrack</span>
+        <a routerLink="/home" class="brand">CalTrack</a>
         <div class="top-bar-actions">
           <span
             class="sync-dot"

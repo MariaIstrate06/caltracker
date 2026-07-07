@@ -44,7 +44,8 @@
     { "id": "flat-white", "name": "Flat white", "calories": 140, "protein": 6, "servingNote": "whole milk, standard size" },
     { "id": "espresso-single", "name": "Espresso", "calories": 2, "protein": 0.1, "servingNote": "single shot ~30ml" },
     { "id": "espresso-double", "name": "Espresso (double)", "calories": 4, "protein": 0.2, "servingNote": "double shot ~60ml — separate quick button" },
-    { "id": "cortado", "name": "Cortado", "calories": 48, "protein": 2.5, "servingNote": "estimate, ~120ml" }
+    { "id": "cortado", "name": "Cortado", "calories": 48, "protein": 2.5, "servingNote": "estimate, ~120ml" },
+    { "id": "gin-tonic", "name": "Gin & Tonic", "calories": 220, "protein": 0, "servingNote": "estimate, standard serve" }
   ],
   "meals": [
     {
