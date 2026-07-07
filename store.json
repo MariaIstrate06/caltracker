@@ -648,6 +648,18 @@
       "computedProtein": 6.75,
       "id": "aacb629e-3c89-48bf-b720-efa972c8121d",
       "updatedAt": "2026-07-06T23:09:39.513Z"
+    },
+    {
+      "profileId": "ac4cf7e1-1e2c-4ed4-97e7-df941864727c",
+      "date": "2026-07-07",
+      "type": "drink",
+      "refId": "pepsi-twist",
+      "quantity": 2,
+      "timestamp": "2026-07-07T07:05:08.194Z",
+      "computedCalories": 278,
+      "computedProtein": 0,
+      "id": "4e10b833-74da-4acd-bd43-a1ad854c6621",
+      "updatedAt": "2026-07-07T07:05:08.194Z"
     }
   ],
   "tombstones": {}
