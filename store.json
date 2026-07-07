@@ -244,6 +244,13 @@
       "proteinPer100g": 6.3,
       "id": "dcc61c2b-c6e0-4958-bfda-9a8b57499d61",
       "updatedAt": "2026-07-07T08:17:14.580Z"
+    },
+    {
+      "name": "Bacon",
+      "caloriesPer100g": 540,
+      "proteinPer100g": 37,
+      "id": "890ce582-6239-4d50-9928-c653c74286e5",
+      "updatedAt": "2026-07-07T08:18:28.771Z"
     }
   ],
   "meals": [
