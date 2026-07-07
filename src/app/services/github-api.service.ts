@@ -102,6 +102,9 @@ export class GithubApiService {
     return fetch(`${API_BASE}${path}`, {
       ...init,
       keepalive: true,
+      // GitHub's Contents API GET responses are cacheable; without this, a retry after a 409
+      // can keep reading the same stale sha from the browser's HTTP cache and never converge.
+      cache: 'no-store',
       headers: {
         Accept: 'application/vnd.github+json',
         'X-GitHub-Api-Version': API_VERSION,

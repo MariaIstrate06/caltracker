@@ -1,17 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { CountUpDirective } from '../../components/count-up.directive';
 import { Profile } from '../../models';
 import { DrinksService } from '../../services/drinks.service';
 import { LogService } from '../../services/log.service';
 import { ProfilesService } from '../../services/profiles.service';
-import { getBucharestToday } from '../../utils/timezone.util';
 import { computeDayTotals } from '../../utils/macro-calc.util';
+import { getBucharestToday } from '../../utils/timezone.util';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, CountUpDirective],
   template: `
     <div *ngIf="!activeProfile" class="empty-state">
       No active profile yet. <a routerLink="/settings">Go to Settings</a> to create one.
@@ -22,18 +23,27 @@ import { computeDayTotals } from '../../utils/macro-calc.util';
 
       <div class="stats-row">
         <div class="stat">
-          <div class="stat-value">{{ caloriesRemaining }}</div>
+          <div class="stat-value numeric" [appCountUp]="caloriesRemaining">0</div>
           <div class="stat-label">calories remaining</div>
+          <div class="progress-track">
+            <div
+              class="progress-fill"
+              [class.progress-over]="isOverCalorieGoal"
+              [style.width.%]="caloriePercent"
+            ></div>
+          </div>
         </div>
         <div class="stat">
-          <div class="stat-value">{{ drinksRemainingDisplay }}</div>
+          <div class="stat-value numeric">{{ drinksRemainingDisplay }}</div>
           <div class="stat-label">drinks remaining</div>
         </div>
       </div>
 
       <div class="card stat-secondary">
         <span>Protein today</span>
-        <span class="stat-value">{{ proteinLogged }} / {{ profile.dailyProteinGoal }} g</span>
+        <span class="stat-value numeric">
+          <span [appCountUp]="proteinLogged" [countUpDecimals]="1">0</span> / {{ profile.dailyProteinGoal }} g
+        </span>
       </div>
 
       <div class="actions">
@@ -47,6 +57,8 @@ import { computeDayTotals } from '../../utils/macro-calc.util';
 export class HomeComponent implements OnInit {
   activeProfile: Profile | null = null;
   caloriesRemaining = 0;
+  caloriePercent = 0;
+  isOverCalorieGoal = false;
   proteinLogged = 0;
   drinksRemainingDisplay = '–';
 
@@ -72,6 +84,8 @@ export class HomeComponent implements OnInit {
     const totals = computeDayTotals(entries);
 
     this.caloriesRemaining = Math.max(0, Math.round(profile.dailyCalorieGoal - totals.calories));
+    this.isOverCalorieGoal = totals.calories > profile.dailyCalorieGoal;
+    this.caloriePercent = profile.dailyCalorieGoal > 0 ? Math.min(100, (totals.calories / profile.dailyCalorieGoal) * 100) : 0;
     this.proteinLogged = Math.round(totals.protein * 10) / 10;
 
     const drinks = this.drinksService.getAll();

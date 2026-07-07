@@ -9,26 +9,36 @@ import { SyncService } from './services/sync.service';
   standalone: true,
   imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule],
   template: `
-    <nav class="nav">
-      <a routerLink="/home" routerLinkActive="active">Home</a>
-      <a routerLink="/today" routerLinkActive="active">Today</a>
-      <a routerLink="/browse" routerLinkActive="active">Browse</a>
-      <a routerLink="/drinks" routerLinkActive="active">Drinks</a>
-      <a routerLink="/manage" routerLinkActive="active">Manage</a>
-      <a routerLink="/stats" routerLinkActive="active">Stats</a>
-      <a routerLink="/settings" routerLinkActive="active">Settings</a>
-      <span
-        *ngIf="sync.status$ | async as status"
-        [title]="statusTitle(status)"
-        [style.cursor]="status.state === 'error' ? 'pointer' : 'default'"
-        (click)="status.state === 'error' && sync.retryNow()"
-      >
-        {{ statusIcon(status.state) }}
-      </span>
-    </nav>
-    <main class="page">
-      <router-outlet />
-    </main>
+    <div class="app-shell">
+      <header class="top-bar">
+        <span class="brand">CalTrack</span>
+        <div class="top-bar-actions">
+          <span
+            class="sync-dot"
+            *ngIf="sync.status$ | async as status"
+            [class]="'sync-dot sync-' + status.state"
+            [title]="statusTitle(status)"
+            (click)="status.state === 'error' && sync.retryNow()"
+          >
+            {{ statusIcon(status.state) }}
+          </span>
+          <a routerLink="/manage" routerLinkActive="active" class="icon-btn" title="Manage library">📚</a>
+          <a routerLink="/settings" routerLinkActive="active" class="icon-btn" title="Settings">⚙️</a>
+        </div>
+      </header>
+
+      <main class="page">
+        <router-outlet />
+      </main>
+
+      <nav class="bottom-tabs">
+        <a routerLink="/home" routerLinkActive="active"><span class="tab-icon">🏠</span>Home</a>
+        <a routerLink="/today" routerLinkActive="active"><span class="tab-icon">📅</span>Today</a>
+        <a routerLink="/browse" routerLinkActive="active"><span class="tab-icon">📖</span>Browse</a>
+        <a routerLink="/drinks" routerLinkActive="active"><span class="tab-icon">🥤</span>Drinks</a>
+        <a routerLink="/stats" routerLinkActive="active"><span class="tab-icon">📊</span>Stats</a>
+      </nav>
+    </div>
   `,
 })
 export class AppComponent {
@@ -37,13 +47,13 @@ export class AppComponent {
   statusIcon(state: SyncStatus['state']): string {
     switch (state) {
       case 'synced':
-        return '🟢';
+        return '✓';
       case 'syncing':
-        return '🟡';
+        return '↻';
       case 'error':
-        return '🔴';
+        return '!';
       default:
-        return '⚪';
+        return '○';
     }
   }
 
@@ -54,7 +64,7 @@ export class AppComponent {
       case 'syncing':
         return 'Syncing…';
       case 'error':
-        return `Sync error: ${status.error ?? 'unknown'} — click to retry`;
+        return `Sync error: ${status.error ?? 'unknown'} — tap to retry`;
       default:
         return 'Not connected — local only';
     }
