@@ -783,28 +783,6 @@
     {
       "profileId": "da43035c-935b-4b52-82f1-85c6a6d377ef",
       "date": "2026-07-07",
-      "type": "meal",
-      "refId": null,
-      "name": "1 Oil Spray, Chickpeas",
-      "itemsOverride": [
-        {
-          "ingredientId": "761fa029-9747-4298-9966-e16a4f654867",
-          "amountGrams": 100
-        },
-        {
-          "ingredientId": "5df5466a-e7b9-4c4a-a0cd-9d5d3bfdbb31",
-          "amountGrams": 100
-        }
-      ],
-      "timestamp": "2026-07-07T19:07:30.411Z",
-      "computedCalories": 137,
-      "computedProtein": 6.7,
-      "id": "e2afe648-7abd-46d4-89cc-aa85872e39e0",
-      "updatedAt": "2026-07-07T19:07:30.411Z"
-    },
-    {
-      "profileId": "da43035c-935b-4b52-82f1-85c6a6d377ef",
-      "date": "2026-07-07",
       "type": "drink",
       "refId": "espresso-tonic",
       "quantity": 1,
@@ -820,6 +798,7 @@
     "4e10b833-74da-4acd-bd43-a1ad854c6621": "2026-07-07T07:24:47.781Z",
     "ac4cf7e1-1e2c-4ed4-97e7-df941864727c": "2026-07-07T07:25:12.688Z",
     "131b56ed-3ec1-4bcc-8fd2-7bcde95995a1": "2026-07-07T10:02:17.552Z",
-    "2a37ec42-fabc-43ff-a20b-2e919e902c2c": "2026-07-07T10:17:30.984Z"
+    "2a37ec42-fabc-43ff-a20b-2e919e902c2c": "2026-07-07T10:17:30.984Z",
+    "e2afe648-7abd-46d4-89cc-aa85872e39e0": "2026-07-07T19:08:04.064Z"
   }
 }
