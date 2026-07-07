@@ -272,6 +272,13 @@
       "proteinPer100g": 13,
       "id": "0613f9ab-e6c9-4d3a-93db-4f480cfb7fcb",
       "updatedAt": "2026-07-07T17:38:22.648Z"
+    },
+    {
+      "name": "1 Oil Spray",
+      "caloriesPer100g": 10,
+      "proteinPer100g": 0,
+      "id": "761fa029-9747-4298-9966-e16a4f654867",
+      "updatedAt": "2026-07-07T19:06:48.497Z"
     }
   ],
   "meals": [
