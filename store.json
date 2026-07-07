@@ -801,6 +801,18 @@
       "computedProtein": 6.7,
       "id": "e2afe648-7abd-46d4-89cc-aa85872e39e0",
       "updatedAt": "2026-07-07T19:07:30.411Z"
+    },
+    {
+      "profileId": "da43035c-935b-4b52-82f1-85c6a6d377ef",
+      "date": "2026-07-07",
+      "type": "drink",
+      "refId": "espresso-tonic",
+      "quantity": 1,
+      "timestamp": "2026-07-07T19:07:43.004Z",
+      "computedCalories": 65,
+      "computedProtein": 0.3,
+      "id": "845f3d3f-c662-4a22-baae-a5ebdaeb8226",
+      "updatedAt": "2026-07-07T19:07:43.004Z"
     }
   ],
   "tombstones": {
