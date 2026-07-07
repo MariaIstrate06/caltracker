@@ -652,6 +652,18 @@
       "computedProtein": 47,
       "id": "131b56ed-3ec1-4bcc-8fd2-7bcde95995a1",
       "updatedAt": "2026-07-07T07:26:03.122Z"
+    },
+    {
+      "profileId": "da43035c-935b-4b52-82f1-85c6a6d377ef",
+      "date": "2026-07-07",
+      "type": "drink",
+      "refId": "cortado",
+      "quantity": 1,
+      "timestamp": "2026-07-07T07:38:34.847Z",
+      "computedCalories": 48,
+      "computedProtein": 2.5,
+      "id": "17cb4604-b42d-4b76-9137-85ed5c42026d",
+      "updatedAt": "2026-07-07T07:38:34.847Z"
     }
   ],
   "tombstones": {
