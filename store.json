@@ -753,6 +753,18 @@
       "computedProtein": 32.5,
       "id": "2c9001b2-6f8e-464f-a31a-267311e88af3",
       "updatedAt": "2026-07-07T17:38:35.647Z"
+    },
+    {
+      "profileId": "da43035c-935b-4b52-82f1-85c6a6d377ef",
+      "date": "2026-07-07",
+      "type": "drink",
+      "refId": "beer",
+      "quantity": 1,
+      "timestamp": "2026-07-07T17:38:47.135Z",
+      "computedCalories": 215,
+      "computedProtein": 1.8,
+      "id": "c853e0f5-c820-46d3-87a7-72785081919e",
+      "updatedAt": "2026-07-07T17:38:47.135Z"
     }
   ],
   "tombstones": {
