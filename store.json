@@ -319,7 +319,8 @@
           "amountGrams": 60
         }
       ],
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-07T19:33:55.920Z",
+      "icon": "🌯"
     },
     {
       "id": "beef-rice",
@@ -343,7 +344,8 @@
           "amountGrams": 20
         }
       ],
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-07T19:33:55.921Z",
+      "icon": "🥘"
     },
     {
       "id": "chicken-soy-noodles",
@@ -371,7 +373,8 @@
           "amountGrams": 150
         }
       ],
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-07T19:33:55.921Z",
+      "icon": "🍜"
     },
     {
       "id": "chicken-shawarma-wrap",
@@ -403,7 +406,8 @@
           "amountGrams": 30
         }
       ],
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-07T19:33:55.921Z",
+      "icon": "🌯"
     },
     {
       "id": "chicken-fries-tomato-salad",
@@ -423,7 +427,8 @@
           "amountGrams": 200
         }
       ],
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-07T19:33:55.921Z",
+      "icon": "🍗"
     },
     {
       "id": "pesto-pasta-burrata",
@@ -443,7 +448,8 @@
           "amountGrams": 15
         }
       ],
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-07T19:33:55.921Z",
+      "icon": "🍝"
     },
     {
       "id": "beef-airfried-potatoes",
@@ -459,7 +465,8 @@
           "amountGrams": 220
         }
       ],
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-07T19:33:55.921Z",
+      "icon": "🥩"
     },
     {
       "id": "chili-con-carne-rice",
@@ -483,7 +490,8 @@
           "amountGrams": 100
         }
       ],
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-07T19:33:55.921Z",
+      "icon": "🍲"
     },
     {
       "id": "mashed-potatoes-chicken",
@@ -503,7 +511,8 @@
           "amountGrams": 30
         }
       ],
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-07T19:33:55.921Z",
+      "icon": "🍗"
     },
     {
       "id": "burger-bowl",
@@ -535,7 +544,8 @@
           "amountGrams": 80
         }
       ],
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-07T19:33:55.922Z",
+      "icon": "🍔"
     },
     {
       "id": "cucumber-tuna-salad",
@@ -563,7 +573,8 @@
           "amountGrams": 15
         }
       ],
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-07T19:33:55.922Z",
+      "icon": "🥗"
     },
     {
       "id": "cucumber-philadelphia-salad",
@@ -587,7 +598,8 @@
           "amountGrams": 10
         }
       ],
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-07T19:33:55.922Z",
+      "icon": "🥗"
     }
   ],
   "drinks": [
