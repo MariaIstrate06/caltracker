@@ -984,24 +984,6 @@
       "date": "2026-07-08",
       "type": "meal",
       "refId": null,
-      "name": "Chickpeas",
-      "itemsOverride": [
-        {
-          "ingredientId": "5df5466a-e7b9-4c4a-a0cd-9d5d3bfdbb31",
-          "amountGrams": 300
-        }
-      ],
-      "timestamp": "2026-07-08T19:19:30.529Z",
-      "computedCalories": 381,
-      "computedProtein": 20.1,
-      "id": "d6acb471-c8d6-43d4-8d29-0f63159b6545",
-      "updatedAt": "2026-07-08T19:19:30.529Z"
-    },
-    {
-      "profileId": "da43035c-935b-4b52-82f1-85c6a6d377ef",
-      "date": "2026-07-08",
-      "type": "meal",
-      "refId": null,
       "name": "Popcorn snack",
       "itemsOverride": [
         {
@@ -1024,6 +1006,7 @@
     "2a37ec42-fabc-43ff-a20b-2e919e902c2c": "2026-07-07T10:17:30.984Z",
     "e2afe648-7abd-46d4-89cc-aa85872e39e0": "2026-07-07T19:08:04.064Z",
     "4586c854-42b9-4731-823c-3515a599fab4": "2026-07-07T19:35:07.718Z",
-    "0586efee-4adc-43b7-ac0e-90a0c362b647": "2026-07-07T19:40:04.939Z"
+    "0586efee-4adc-43b7-ac0e-90a0c362b647": "2026-07-07T19:40:04.939Z",
+    "d6acb471-c8d6-43d4-8d29-0f63159b6545": "2026-07-08T19:33:12.171Z"
   }
 }
