@@ -300,6 +300,13 @@
       "proteinPer100g": 0,
       "id": "0ab6ac5f-afc8-4402-873a-74d1ae881062",
       "updatedAt": "2026-07-07T19:37:03.961Z"
+    },
+    {
+      "name": "Popcorn Chio",
+      "caloriesPer100g": 460,
+      "proteinPer100g": 8.5,
+      "id": "1b620260-bf5e-4415-9106-09c04d169cc4",
+      "updatedAt": "2026-07-08T19:32:29.266Z"
     }
   ],
   "meals": [
