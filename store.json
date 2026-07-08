@@ -934,6 +934,43 @@
       "computedProtein": 41.885,
       "id": "be66f0a1-8c61-4700-97c7-935dda1972a9",
       "updatedAt": "2026-07-08T19:13:21.972Z"
+    },
+    {
+      "profileId": "da43035c-935b-4b52-82f1-85c6a6d377ef",
+      "date": "2026-07-08",
+      "type": "meal",
+      "refId": "8bf442c0-2142-451a-890a-b4b428ba3637",
+      "itemsOverride": [
+        {
+          "ingredientId": "ground-beef-lean-5",
+          "amountGrams": 120
+        },
+        {
+          "ingredientId": "white-rice-dry",
+          "amountGrams": 55
+        },
+        {
+          "ingredientId": "jalapeno",
+          "amountGrams": 20
+        },
+        {
+          "ingredientId": "greek-yogurt-2pct",
+          "amountGrams": 70
+        },
+        {
+          "ingredientId": "dcc61c2b-c6e0-4958-bfda-9a8b57499d61",
+          "amountGrams": 100
+        },
+        {
+          "ingredientId": "wrap",
+          "amountGrams": 61
+        }
+      ],
+      "timestamp": "2026-07-08T19:13:39.697Z",
+      "computedCalories": 665.8000000000001,
+      "computedProtein": 46.765,
+      "id": "bc0245be-7082-4038-ac49-fc09fc5cbb30",
+      "updatedAt": "2026-07-08T19:13:39.697Z"
     }
   ],
   "tombstones": {
