@@ -829,6 +829,18 @@
       "computedProtein": 2.5,
       "id": "d2b9e2f5-d243-48c7-9a12-8cf89066ab0a",
       "updatedAt": "2026-07-08T18:42:36.403Z"
+    },
+    {
+      "profileId": "da43035c-935b-4b52-82f1-85c6a6d377ef",
+      "date": "2026-07-08",
+      "type": "drink",
+      "refId": "cola-zero",
+      "quantity": 1,
+      "timestamp": "2026-07-08T18:42:45.005Z",
+      "computedCalories": 1,
+      "computedProtein": 0,
+      "id": "c9b6cf08-e926-4fa1-9ba8-55c7a151b5e6",
+      "updatedAt": "2026-07-08T18:42:45.005Z"
     }
   ],
   "tombstones": {
