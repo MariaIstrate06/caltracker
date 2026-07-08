@@ -642,6 +642,38 @@
       ],
       "id": "9934c7e0-e5d9-4c57-accd-eba0a6fb129f",
       "updatedAt": "2026-07-08T19:10:52.568Z"
+    },
+    {
+      "name": "Beef & Rice with egg and jalapenos (copy)",
+      "category": "dinner",
+      "items": [
+        {
+          "ingredientId": "ground-beef-lean-5",
+          "amountGrams": 120
+        },
+        {
+          "ingredientId": "white-rice-dry",
+          "amountGrams": 55
+        },
+        {
+          "ingredientId": "jalapeno",
+          "amountGrams": 20
+        },
+        {
+          "ingredientId": "greek-yogurt-2pct",
+          "amountGrams": 70
+        },
+        {
+          "ingredientId": "dcc61c2b-c6e0-4958-bfda-9a8b57499d61",
+          "amountGrams": 100
+        },
+        {
+          "ingredientId": "wrap",
+          "amountGrams": 61
+        }
+      ],
+      "id": "8bf442c0-2142-451a-890a-b4b428ba3637",
+      "updatedAt": "2026-07-08T19:12:16.734Z"
     }
   ],
   "drinks": [
