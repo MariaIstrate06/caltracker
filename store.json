@@ -971,6 +971,24 @@
       "computedProtein": 46.765,
       "id": "bc0245be-7082-4038-ac49-fc09fc5cbb30",
       "updatedAt": "2026-07-08T19:15:41.564Z"
+    },
+    {
+      "profileId": "da43035c-935b-4b52-82f1-85c6a6d377ef",
+      "date": "2026-07-08",
+      "type": "meal",
+      "refId": null,
+      "name": "Chickpeas",
+      "itemsOverride": [
+        {
+          "ingredientId": "5df5466a-e7b9-4c4a-a0cd-9d5d3bfdbb31",
+          "amountGrams": 300
+        }
+      ],
+      "timestamp": "2026-07-08T19:19:30.529Z",
+      "computedCalories": 381,
+      "computedProtein": 20.1,
+      "id": "d6acb471-c8d6-43d4-8d29-0f63159b6545",
+      "updatedAt": "2026-07-08T19:19:30.529Z"
     }
   ],
   "tombstones": {
