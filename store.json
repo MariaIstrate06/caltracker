@@ -996,6 +996,24 @@
       "computedProtein": 20.1,
       "id": "d6acb471-c8d6-43d4-8d29-0f63159b6545",
       "updatedAt": "2026-07-08T19:19:30.529Z"
+    },
+    {
+      "profileId": "da43035c-935b-4b52-82f1-85c6a6d377ef",
+      "date": "2026-07-08",
+      "type": "meal",
+      "refId": null,
+      "name": "Popcorn snack",
+      "itemsOverride": [
+        {
+          "ingredientId": "1b620260-bf5e-4415-9106-09c04d169cc4",
+          "amountGrams": 60
+        }
+      ],
+      "timestamp": "2026-07-08T19:32:40.447Z",
+      "computedCalories": 276,
+      "computedProtein": 5.1,
+      "id": "ceb125ec-7eef-48f1-9cc5-6bb649d7e54b",
+      "updatedAt": "2026-07-08T19:32:40.447Z"
     }
   ],
   "tombstones": {
