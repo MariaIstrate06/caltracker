@@ -9,6 +9,7 @@ import { DrinksService } from '../../services/drinks.service';
 import { IngredientsService } from '../../services/ingredients.service';
 import { MealsService } from '../../services/meals.service';
 import { computeMealTotals, MacroTotals } from '../../utils/macro-calc.util';
+import { DEFAULT_MEAL_ICON } from '../../utils/meal-icons.util';
 
 type Section = 'ingredients' | 'meals' | 'drinks';
 
@@ -60,7 +61,7 @@ type Section = 'ingredients' | 'meals' | 'drinks';
         <div class="entry-list">
           <div class="entry-row" *ngFor="let meal of filteredMeals">
             <div class="entry-info">
-              <strong>{{ meal.name }}</strong>
+              <strong>{{ meal.icon || defaultIcon }} {{ meal.name }}</strong>
               <small>{{ meal.category }} · {{ mealTotals(meal).calories | number: '1.0-0' }} kcal</small>
             </div>
             <div class="btn-row">
@@ -78,7 +79,7 @@ type Section = 'ingredients' | 'meals' | 'drinks';
       </ng-container>
 
       <ng-container *ngIf="editingMeal as meal">
-        <h3>Edit "{{ meal.name }}"</h3>
+        <h3>Edit "{{ meal.icon || defaultIcon }} {{ meal.name }}"</h3>
         <app-meal-builder [seedMeal]="meal" mode="edit" (saved)="onMealSaved()" (cancelled)="editingMeal = null" />
       </ng-container>
     </ng-container>
@@ -111,6 +112,7 @@ type Section = 'ingredients' | 'meals' | 'drinks';
 })
 export class ManageComponent implements OnInit {
   section: Section = 'ingredients';
+  readonly defaultIcon = DEFAULT_MEAL_ICON;
 
   ingredients: Ingredient[] = [];
   ingredientQuery = '';

@@ -883,14 +883,68 @@ h3 {
   width: 48px;
 }
 
-/* ===== Home greeting ===== */
+/* ===== Icon picker (meal icons) ===== */
 
-.greeting-question {
-  display: block;
-  color: var(--text-muted);
-  font-size: 1rem;
-  font-weight: 500;
-  margin-top: 2px;
+.icon-picker-trigger {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 14px;
+  margin-bottom: 10px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface-raised);
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+}
+
+.icon-picker-current {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.icon-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
+  gap: 6px;
+  max-height: 220px;
+  overflow-y: auto;
+  padding: 10px;
+  margin-bottom: 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface-raised);
+}
+
+.icon-picker-option {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  background: var(--surface);
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition:
+    transform 0.12s ease,
+    border-color 0.15s ease;
+}
+
+.icon-picker-option:hover {
+  border-color: var(--border-strong);
+}
+
+.icon-picker-option:active {
+  transform: scale(0.92);
+}
+
+.icon-picker-option.selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(126, 217, 87, 0.35);
 }
 
 /* ===== Drinks availability grid (Home) ===== */

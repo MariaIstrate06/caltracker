@@ -5,6 +5,7 @@ import { Ingredient, Meal, MealCategory } from '../../models';
 import { IngredientsService } from '../../services/ingredients.service';
 import { MealsService } from '../../services/meals.service';
 import { computeMealTotals, MacroTotals } from '../../utils/macro-calc.util';
+import { DEFAULT_MEAL_ICON } from '../../utils/meal-icons.util';
 
 const CATEGORIES: MealCategory[] = ['breakfast', 'lunch', 'dinner', 'snack'];
 
@@ -28,7 +29,7 @@ type View = 'list' | 'detail' | 'duplicate';
           <h3>{{ group.category }}</h3>
           <div class="result-list">
             <button class="result-item" *ngFor="let meal of group.meals" (click)="openMeal(meal)">
-              <span>{{ meal.name }}</span>
+              <span>{{ meal.icon || defaultIcon }} {{ meal.name }}</span>
             </button>
           </div>
         </div>
@@ -37,7 +38,7 @@ type View = 'list' | 'detail' | 'duplicate';
 
       <ng-container *ngSwitchCase="'detail'">
         <ng-container *ngIf="selectedMeal as meal">
-          <h3>{{ meal.name }}</h3>
+          <h3>{{ meal.icon || defaultIcon }} {{ meal.name }}</h3>
           <p class="muted">{{ meal.category }}</p>
 
           <div class="item-row" *ngFor="let item of meal.items">
@@ -68,6 +69,7 @@ export class BrowseComponent implements OnInit {
   view: View = 'list';
   selectedMeal: Meal | null = null;
   groupedMeals: CategoryGroup[] = [];
+  readonly defaultIcon = DEFAULT_MEAL_ICON;
 
   private allIngredients: Ingredient[] = [];
 

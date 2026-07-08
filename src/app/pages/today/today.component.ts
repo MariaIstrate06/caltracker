@@ -9,11 +9,13 @@ import { LogService } from '../../services/log.service';
 import { MealsService } from '../../services/meals.service';
 import { ProfilesService } from '../../services/profiles.service';
 import { computeDayTotals, computeMealTotals, MacroTotals, rescaleQuantity } from '../../utils/macro-calc.util';
+import { DEFAULT_MEAL_ICON } from '../../utils/meal-icons.util';
 import { getBucharestToday, shiftDateKey } from '../../utils/timezone.util';
 
 interface EntryView {
   entry: DailyLogEntry;
-  name: string;
+  /** Meal entries get an icon prefix (e.g. "🍕 Pizza"); drinks don't have icons, so this is just the name. */
+  displayName: string;
   calories: number;
   protein: number;
 }
@@ -48,7 +50,7 @@ interface EntryView {
         <div class="entry-row" *ngFor="let view of entries">
           <ng-container *ngIf="editingId !== view.entry.id; else editTemplate">
             <div class="entry-info">
-              <strong>{{ view.name }}</strong>
+              <strong>{{ view.displayName }}</strong>
               <small *ngIf="view.entry.type === 'drink'">{{ view.entry.quantity ?? 1 }}x</small>
               <small *ngIf="view.entry.type === 'meal'">{{ view.entry.timestamp | date: 'HH:mm' }}</small>
             </div>
@@ -63,7 +65,7 @@ interface EntryView {
 
           <ng-template #editTemplate>
             <div style="width: 100%">
-              <strong>{{ view.name }}</strong>
+              <strong>{{ view.displayName }}</strong>
 
               <div *ngIf="view.entry.type === 'meal'">
                 <div class="item-row" *ngFor="let item of editMealItems">
@@ -241,12 +243,15 @@ export class TodayComponent implements OnInit {
   }
 
   private toView(entry: DailyLogEntry): EntryView {
-    let name: string;
+    let displayName: string;
     if (entry.type === 'meal') {
-      name = entry.refId ? (this.mealsService.getById(entry.refId)?.name ?? '(deleted meal)') : (entry.name ?? 'Meal');
+      const meal = entry.refId ? this.mealsService.getById(entry.refId) : null;
+      const name = entry.refId ? (meal?.name ?? '(deleted meal)') : (entry.name ?? 'Meal');
+      const icon = meal?.icon ?? DEFAULT_MEAL_ICON;
+      displayName = `${icon} ${name}`;
     } else {
-      name = entry.refId ? (this.drinksService.getById(entry.refId)?.name ?? '(deleted drink)') : (entry.name ?? 'Drink');
+      displayName = entry.refId ? (this.drinksService.getById(entry.refId)?.name ?? '(deleted drink)') : (entry.name ?? 'Drink');
     }
-    return { entry, name, calories: entry.computedCalories, protein: entry.computedProtein };
+    return { entry, displayName, calories: entry.computedCalories, protein: entry.computedProtein };
   }
 }

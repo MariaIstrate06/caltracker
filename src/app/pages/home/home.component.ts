@@ -11,9 +11,6 @@ import { computeDayTotals } from '../../utils/macro-calc.util';
 import { pluralize } from '../../utils/pluralize.util';
 import { getBucharestToday } from '../../utils/timezone.util';
 
-/** "Hi, {name}." is always shown; one of these is picked at random each visit. Empty string keeps it a plain, quip-free greeting. */
-const GREETING_QUESTIONS = ['', 'Binged yet?', 'Skinny yet?', 'No shaorma pls', "Logging some veggies aren't u"];
-
 /** Home shows only this curated set of drinks, in this order — not the whole library (that's what Add a drink is for). */
 const FEATURED_DRINK_NAMES = ['Beer', 'Wine glass', 'Gin & Tonic', 'Espresso tonic'];
 
@@ -33,18 +30,15 @@ interface DrinkAvailability {
     </div>
 
     <ng-container *ngIf="activeProfile as profile">
-      <h2>
-        {{ profile.emoji }} Hi, {{ profile.name }}.
-        <span class="greeting-question" *ngIf="greetingQuestion">{{ greetingQuestion }}</span>
-      </h2>
+      <h2>{{ profile.emoji }} Hi, {{ profile.name }}.</h2>
 
       <div class="card rings-card">
         <app-progress-rings [caloriePercent]="caloriePercent" [proteinPercent]="proteinPercent" [caloriesOver]="isOverCalorieGoal" />
         <div class="rings-legend">
           <div class="rings-legend-item">
             <span class="legend-dot" [style.background]="isOverCalorieGoal ? 'var(--status-over)' : 'var(--accent)'"></span>
-            <strong class="numeric" [appCountUp]="caloriesRemaining">0</strong>
-            <span>kcal left</span>
+            <strong class="numeric" [appCountUp]="isOverCalorieGoal ? caloriesOverAmount : caloriesRemaining">0</strong>
+            <span>{{ isOverCalorieGoal ? 'kcal over' : 'kcal left' }}</span>
           </div>
           <div class="rings-legend-item">
             <span class="legend-dot" style="background: var(--accent-protein)"></span>
@@ -77,12 +71,12 @@ interface DrinkAvailability {
 export class HomeComponent implements OnInit {
   activeProfile: Profile | null = null;
   caloriesRemaining = 0;
+  caloriesOverAmount = 0;
   caloriePercent = 0;
   isOverCalorieGoal = false;
   proteinLogged = 0;
   proteinPercent = 0;
   drinkAvailability: DrinkAvailability[] = [];
-  greetingQuestion = '';
 
   constructor(
     private profilesService: ProfilesService,
@@ -91,7 +85,6 @@ export class HomeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.greetingQuestion = GREETING_QUESTIONS[Math.floor(Math.random() * GREETING_QUESTIONS.length)];
     this.refresh();
   }
 
@@ -107,6 +100,7 @@ export class HomeComponent implements OnInit {
     const totals = computeDayTotals(entries);
 
     this.caloriesRemaining = Math.max(0, Math.round(profile.dailyCalorieGoal - totals.calories));
+    this.caloriesOverAmount = Math.max(0, Math.round(totals.calories - profile.dailyCalorieGoal));
     this.isOverCalorieGoal = totals.calories > profile.dailyCalorieGoal;
     this.caloriePercent = profile.dailyCalorieGoal > 0 ? Math.min(100, (totals.calories / profile.dailyCalorieGoal) * 100) : 0;
     this.proteinLogged = Math.round(totals.protein * 10) / 10;

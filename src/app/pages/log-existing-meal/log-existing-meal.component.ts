@@ -8,6 +8,7 @@ import { LogService } from '../../services/log.service';
 import { MealsService } from '../../services/meals.service';
 import { ProfilesService } from '../../services/profiles.service';
 import { computeMealTotals, MacroTotals } from '../../utils/macro-calc.util';
+import { DEFAULT_MEAL_ICON } from '../../utils/meal-icons.util';
 import { getBucharestToday } from '../../utils/timezone.util';
 
 @Component({
@@ -21,7 +22,7 @@ import { getBucharestToday } from '../../utils/timezone.util';
       <input class="search-input" placeholder="Search meals…" [(ngModel)]="searchQuery" />
       <div class="result-list" *ngIf="filteredMeals.length; else noMeals">
         <button class="result-item" *ngFor="let meal of filteredMeals" (click)="selectMeal(meal)">
-          <span>{{ meal.name }}</span>
+          <span>{{ meal.icon || defaultIcon }} {{ meal.name }}</span>
           <span class="muted">{{ meal.category }}</span>
         </button>
       </div>
@@ -31,7 +32,7 @@ import { getBucharestToday } from '../../utils/timezone.util';
     </ng-container>
 
     <ng-container *ngIf="selectedMeal as meal">
-      <h3>{{ meal.name }}</h3>
+      <h3>{{ meal.icon || defaultIcon }} {{ meal.name }}</h3>
 
       <div class="item-row" *ngFor="let item of editItems">
         <span class="name">{{ ingredientName(item.ingredientId) }}</span>
@@ -59,6 +60,7 @@ export class LogExistingMealComponent implements OnInit {
   searchQuery = '';
   selectedMeal: Meal | null = null;
   editItems: MealItem[] = [];
+  readonly defaultIcon = DEFAULT_MEAL_ICON;
 
   private allMeals: Meal[] = [];
   private allIngredients: Ingredient[] = [];

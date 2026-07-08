@@ -5,6 +5,8 @@ import { Ingredient, Meal, MealCategory, MealItem } from '../../models';
 import { IngredientsService } from '../../services/ingredients.service';
 import { MealsService } from '../../services/meals.service';
 import { computeMealTotals, MacroTotals } from '../../utils/macro-calc.util';
+import { DEFAULT_MEAL_ICON } from '../../utils/meal-icons.util';
+import { IconPickerComponent } from '../icon-picker/icon-picker.component';
 import { IngredientFormComponent } from '../ingredient-form/ingredient-form.component';
 
 const CATEGORIES: MealCategory[] = ['breakfast', 'lunch', 'dinner', 'snack'];
@@ -18,13 +20,15 @@ const CATEGORIES: MealCategory[] = ['breakfast', 'lunch', 'dinner', 'snack'];
 @Component({
   selector: 'app-meal-builder',
   standalone: true,
-  imports: [CommonModule, FormsModule, IngredientFormComponent],
+  imports: [CommonModule, FormsModule, IngredientFormComponent, IconPickerComponent],
   template: `
     <input class="search-input" placeholder="Meal name" [(ngModel)]="name" />
 
     <select class="search-input" [(ngModel)]="category">
       <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
     </select>
+
+    <app-icon-picker [(value)]="icon" />
 
     <input class="search-input" placeholder="Search ingredients…" [(ngModel)]="searchQuery" />
     <div class="result-list" *ngIf="filteredIngredients.length">
@@ -71,6 +75,7 @@ export class MealBuilderComponent implements OnInit, OnChanges {
   categories = CATEGORIES;
   name = '';
   category: MealCategory = 'lunch';
+  icon: string = DEFAULT_MEAL_ICON;
   items: MealItem[] = [];
   searchQuery = '';
   showAddIngredientForm = false;
@@ -131,7 +136,7 @@ export class MealBuilderComponent implements OnInit, OnChanges {
     if (!trimmedName || !this.items.length) {
       return;
     }
-    const input = { name: trimmedName, category: this.category, items: this.items };
+    const input = { name: trimmedName, category: this.category, icon: this.icon, items: this.items };
     if (this.mode === 'edit' && this.seedMeal) {
       const updated = this.mealsService.update(this.seedMeal.id, input);
       if (updated) {
@@ -150,10 +155,12 @@ export class MealBuilderComponent implements OnInit, OnChanges {
     if (this.seedMeal) {
       this.name = this.mode === 'edit' ? this.seedMeal.name : `${this.seedMeal.name} (copy)`;
       this.category = this.seedMeal.category;
+      this.icon = this.seedMeal.icon ?? DEFAULT_MEAL_ICON;
       this.items = this.seedMeal.items.map((item) => ({ ...item }));
     } else {
       this.name = '';
       this.category = 'lunch';
+      this.icon = DEFAULT_MEAL_ICON;
       this.items = [];
     }
   }
