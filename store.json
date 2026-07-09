@@ -307,6 +307,13 @@
       "proteinPer100g": 8.5,
       "id": "1b620260-bf5e-4415-9106-09c04d169cc4",
       "updatedAt": "2026-07-08T19:32:29.266Z"
+    },
+    {
+      "name": "Parmesan",
+      "caloriesPer100g": 392,
+      "proteinPer100g": 32,
+      "id": "063876fe-141d-40ab-963c-770d9abd1b0a",
+      "updatedAt": "2026-07-09T10:35:04.108Z"
     }
   ],
   "meals": [
