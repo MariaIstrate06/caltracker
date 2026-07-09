@@ -1003,6 +1003,36 @@
       "computedProtein": 5.1,
       "id": "ceb125ec-7eef-48f1-9cc5-6bb649d7e54b",
       "updatedAt": "2026-07-08T19:32:40.447Z"
+    },
+    {
+      "profileId": "da43035c-935b-4b52-82f1-85c6a6d377ef",
+      "date": "2026-07-09",
+      "type": "meal",
+      "refId": null,
+      "name": "Beef Tomato Pasta",
+      "itemsOverride": [
+        {
+          "ingredientId": "pasta-dry",
+          "amountGrams": 60
+        },
+        {
+          "ingredientId": "tomato",
+          "amountGrams": 100
+        },
+        {
+          "ingredientId": "ground-beef-lean-5",
+          "amountGrams": 125
+        },
+        {
+          "ingredientId": "063876fe-141d-40ab-963c-770d9abd1b0a",
+          "amountGrams": 39
+        }
+      ],
+      "timestamp": "2026-07-09T11:05:53.091Z",
+      "computedCalories": 564.73,
+      "computedProtein": 47.43000000000001,
+      "id": "74432aec-492a-4125-aff9-78ccd3be4c73",
+      "updatedAt": "2026-07-09T11:05:53.091Z"
     }
   ],
   "tombstones": {
