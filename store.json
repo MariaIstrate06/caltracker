@@ -314,6 +314,13 @@
       "proteinPer100g": 32,
       "id": "063876fe-141d-40ab-963c-770d9abd1b0a",
       "updatedAt": "2026-07-09T10:35:04.108Z"
+    },
+    {
+      "name": "Chicken thigh",
+      "caloriesPer100g": 176,
+      "proteinPer100g": 25,
+      "id": "afdeaf1f-940b-42c6-a1e1-c119fc54eb8f",
+      "updatedAt": "2026-07-10T13:50:45.225Z"
     }
   ],
   "meals": [
