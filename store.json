@@ -1070,6 +1070,18 @@
       "computedProtein": 54.1,
       "id": "12b20090-ae86-463e-bdb2-2e6af59762e5",
       "updatedAt": "2026-07-10T13:52:12.834Z"
+    },
+    {
+      "profileId": "da43035c-935b-4b52-82f1-85c6a6d377ef",
+      "date": "2026-07-10",
+      "type": "drink",
+      "refId": "81dc1fc6-7e12-4cbe-93f6-7dfd8c9d42d9",
+      "quantity": 1,
+      "timestamp": "2026-07-10T20:58:17.994Z",
+      "computedCalories": 220,
+      "computedProtein": 0,
+      "id": "985d565c-1657-4dc5-84cd-a062767a579d",
+      "updatedAt": "2026-07-10T20:58:17.994Z"
     }
   ],
   "tombstones": {
