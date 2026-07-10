@@ -1040,6 +1040,36 @@
       "computedProtein": 47.43000000000001,
       "id": "74432aec-492a-4125-aff9-78ccd3be4c73",
       "updatedAt": "2026-07-09T11:05:53.091Z"
+    },
+    {
+      "profileId": "da43035c-935b-4b52-82f1-85c6a6d377ef",
+      "date": "2026-07-10",
+      "type": "meal",
+      "refId": null,
+      "name": "Chicken thigh & chips",
+      "itemsOverride": [
+        {
+          "ingredientId": "afdeaf1f-940b-42c6-a1e1-c119fc54eb8f",
+          "amountGrams": 200
+        },
+        {
+          "ingredientId": "frozen-fries-baked",
+          "amountGrams": 100
+        },
+        {
+          "ingredientId": "avocado",
+          "amountGrams": 60
+        },
+        {
+          "ingredientId": "tomato",
+          "amountGrams": 100
+        }
+      ],
+      "timestamp": "2026-07-10T13:52:12.833Z",
+      "computedCalories": 586,
+      "computedProtein": 54.1,
+      "id": "12b20090-ae86-463e-bdb2-2e6af59762e5",
+      "updatedAt": "2026-07-10T13:52:12.834Z"
     }
   ],
   "tombstones": {
