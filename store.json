@@ -321,6 +321,13 @@
       "proteinPer100g": 25,
       "id": "afdeaf1f-940b-42c6-a1e1-c119fc54eb8f",
       "updatedAt": "2026-07-10T13:50:45.225Z"
+    },
+    {
+      "name": "cheese",
+      "caloriesPer100g": 100,
+      "proteinPer100g": 0,
+      "id": "11eeac37-e761-48bb-ab8e-3a45017a7b90",
+      "updatedAt": "2026-07-24T20:05:39.719Z"
     }
   ],
   "meals": [
@@ -1082,6 +1089,28 @@
       "computedProtein": 0,
       "id": "1512d290-6c7e-432a-a86e-d4c38beecda7",
       "updatedAt": "2026-07-10T23:44:28.576Z"
+    },
+    {
+      "profileId": "da43035c-935b-4b52-82f1-85c6a6d377ef",
+      "date": "2026-07-24",
+      "type": "meal",
+      "refId": null,
+      "name": "Bacon, cheese",
+      "itemsOverride": [
+        {
+          "ingredientId": "890ce582-6239-4d50-9928-c653c74286e5",
+          "amountGrams": 100
+        },
+        {
+          "ingredientId": "11eeac37-e761-48bb-ab8e-3a45017a7b90",
+          "amountGrams": 100
+        }
+      ],
+      "timestamp": "2026-07-24T20:05:41.230Z",
+      "computedCalories": 640,
+      "computedProtein": 37,
+      "id": "1d3da1b7-3cf6-41db-bebe-b7a01c45de2c",
+      "updatedAt": "2026-07-24T20:05:41.230Z"
     }
   ],
   "tombstones": {
