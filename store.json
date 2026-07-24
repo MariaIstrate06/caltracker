@@ -15,7 +15,7 @@
       "name": "Chicken breast (raw)",
       "caloriesPer100g": 165,
       "proteinPer100g": 31,
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "cartofi-prajiti",
@@ -23,21 +23,21 @@
       "caloriesPer100g": 292,
       "proteinPer100g": 3.4,
       "note": "estimate, varies by oil/prep",
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "frozen-fries-baked",
       "name": "Frozen fries (baked)",
       "caloriesPer100g": 120,
       "proteinPer100g": 2,
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "salata-mix",
       "name": "Salată / mixed lettuce",
       "caloriesPer100g": 15,
       "proteinPer100g": 1.4,
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "sos-saorma",
@@ -45,119 +45,119 @@
       "caloriesPer100g": 550,
       "proteinPer100g": 1,
       "note": "estimate, recipe-dependent — check label if store-bought",
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "ketchup",
       "name": "Ketchup",
       "caloriesPer100g": 100,
       "proteinPer100g": 1.2,
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "lipie",
       "name": "Lipie (pita/flatbread)",
       "caloriesPer100g": 275,
       "proteinPer100g": 9,
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "ground-beef-lean-5",
       "name": "Lean ground beef, 5% fat (raw)",
       "caloriesPer100g": 137,
       "proteinPer100g": 21,
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "white-rice-dry",
       "name": "White rice (dry weight)",
       "caloriesPer100g": 365,
       "proteinPer100g": 7.1,
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "cottage-cheese",
       "name": "Cottage cheese",
       "caloriesPer100g": 98,
       "proteinPer100g": 11,
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "jalapeno",
       "name": "Jalapeño",
       "caloriesPer100g": 29,
       "proteinPer100g": 0.9,
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "rice-noodles-dry",
       "name": "Rice noodles (dry)",
       "caloriesPer100g": 364,
       "proteinPer100g": 6,
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "peanut-butter",
       "name": "Peanut butter",
       "caloriesPer100g": 588,
       "proteinPer100g": 25,
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "soy-sauce",
       "name": "Soy sauce",
       "caloriesPer100g": 60,
       "proteinPer100g": 6,
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "cucumber",
       "name": "Cucumber",
       "caloriesPer100g": 15,
       "proteinPer100g": 0.7,
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "wrap",
       "name": "Wrap (tortilla)",
       "caloriesPer100g": 275,
       "proteinPer100g": 8,
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "greek-yogurt-2pct",
       "name": "Greek yogurt (2%)",
       "caloriesPer100g": 73,
       "proteinPer100g": 9,
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "lettuce-iceberg",
       "name": "Iceberg lettuce",
       "caloriesPer100g": 14,
       "proteinPer100g": 0.9,
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "tomato",
       "name": "Tomato",
       "caloriesPer100g": 18,
       "proteinPer100g": 0.9,
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "red-onion",
       "name": "Red onion",
       "caloriesPer100g": 40,
       "proteinPer100g": 1.1,
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "pasta-dry",
       "name": "Pasta (dry)",
       "caloriesPer100g": 371,
       "proteinPer100g": 13,
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "burrata",
@@ -165,7 +165,7 @@
       "caloriesPer100g": 260,
       "proteinPer100g": 15,
       "note": "estimate, brands vary",
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "pesto",
@@ -173,70 +173,70 @@
       "caloriesPer100g": 450,
       "proteinPer100g": 4,
       "note": "estimate, brands vary",
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "potato-raw",
       "name": "Potato (raw)",
       "caloriesPer100g": 77,
       "proteinPer100g": 2,
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "kidney-beans-cooked",
       "name": "Kidney beans (cooked/canned)",
       "caloriesPer100g": 127,
       "proteinPer100g": 8.7,
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "tomato-passata",
       "name": "Tomato passata",
       "caloriesPer100g": 32,
       "proteinPer100g": 1.6,
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "milk-whole",
       "name": "Milk, whole",
       "caloriesPer100g": 61,
       "proteinPer100g": 3.2,
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "avocado",
       "name": "Avocado",
       "caloriesPer100g": 160,
       "proteinPer100g": 2,
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "corn-cooked",
       "name": "Corn (cooked/canned)",
       "caloriesPer100g": 86,
       "proteinPer100g": 3.2,
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "tuna-canned-water",
       "name": "Tuna, canned in water (drained)",
       "caloriesPer100g": 116,
       "proteinPer100g": 26,
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "sesame-seeds",
       "name": "Sesame seeds",
       "caloriesPer100g": 573,
       "proteinPer100g": 18,
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "philadelphia-cream-cheese",
       "name": "Philadelphia cream cheese",
       "caloriesPer100g": 342,
       "proteinPer100g": 5.9,
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "name": "Egg",
@@ -326,7 +326,7 @@
   "meals": [
     {
       "id": "shaorma",
-      "name": "Shaorma Class",
+      "name": "Shaorma",
       "category": "lunch",
       "items": [
         {
@@ -354,8 +354,7 @@
           "amountGrams": 60
         }
       ],
-      "updatedAt": "2026-07-07T19:36:03.802Z",
-      "icon": "🌯"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "beef-rice",
@@ -379,8 +378,7 @@
           "amountGrams": 20
         }
       ],
-      "updatedAt": "2026-07-08T19:09:22.101Z",
-      "icon": "🥘"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "chicken-soy-noodles",
@@ -408,8 +406,7 @@
           "amountGrams": 150
         }
       ],
-      "updatedAt": "2026-07-07T19:33:55.921Z",
-      "icon": "🍜"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "chicken-shawarma-wrap",
@@ -441,8 +438,7 @@
           "amountGrams": 30
         }
       ],
-      "updatedAt": "2026-07-07T19:33:55.921Z",
-      "icon": "🌯"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "chicken-fries-tomato-salad",
@@ -462,8 +458,7 @@
           "amountGrams": 200
         }
       ],
-      "updatedAt": "2026-07-07T19:33:55.921Z",
-      "icon": "🍗"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "pesto-pasta-burrata",
@@ -483,8 +478,7 @@
           "amountGrams": 15
         }
       ],
-      "updatedAt": "2026-07-07T19:33:55.921Z",
-      "icon": "🍝"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "beef-airfried-potatoes",
@@ -500,8 +494,7 @@
           "amountGrams": 220
         }
       ],
-      "updatedAt": "2026-07-07T19:33:55.921Z",
-      "icon": "🥩"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "chili-con-carne-rice",
@@ -525,8 +518,7 @@
           "amountGrams": 100
         }
       ],
-      "updatedAt": "2026-07-07T19:33:55.921Z",
-      "icon": "🍲"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "mashed-potatoes-chicken",
@@ -546,8 +538,7 @@
           "amountGrams": 30
         }
       ],
-      "updatedAt": "2026-07-07T19:33:55.921Z",
-      "icon": "🍗"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "burger-bowl",
@@ -579,8 +570,7 @@
           "amountGrams": 80
         }
       ],
-      "updatedAt": "2026-07-07T19:33:55.922Z",
-      "icon": "🍔"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "cucumber-tuna-salad",
@@ -608,8 +598,7 @@
           "amountGrams": 15
         }
       ],
-      "updatedAt": "2026-07-07T19:33:55.922Z",
-      "icon": "🥗"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "cucumber-philadelphia-salad",
@@ -633,8 +622,7 @@
           "amountGrams": 10
         }
       ],
-      "updatedAt": "2026-07-07T19:33:55.922Z",
-      "icon": "🥗"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "name": "Beef & Rice with egg and jalapenos",
@@ -704,7 +692,7 @@
       "calories": 139,
       "protein": 0,
       "servingNote": "per 330ml can",
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "pepsi-max",
@@ -712,7 +700,7 @@
       "calories": 1,
       "protein": 0,
       "servingNote": "per 330ml can",
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "cola-zero",
@@ -720,7 +708,7 @@
       "calories": 1,
       "protein": 0,
       "servingNote": "per 330ml can",
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "cola",
@@ -728,7 +716,7 @@
       "calories": 139,
       "protein": 0,
       "servingNote": "per 330ml can",
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "espresso-tonic",
@@ -736,7 +724,7 @@
       "calories": 65,
       "protein": 0.3,
       "servingNote": "estimate, ~200ml glass",
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "beer",
@@ -744,7 +732,7 @@
       "calories": 215,
       "protein": 1.8,
       "servingNote": "per 500ml, ~5% ABV",
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "wine-glass",
@@ -752,7 +740,7 @@
       "calories": 125,
       "protein": 0.1,
       "servingNote": "per 150ml, ~12% ABV",
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "flat-white",
@@ -760,7 +748,7 @@
       "calories": 140,
       "protein": 6,
       "servingNote": "whole milk, standard size",
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "espresso-single",
@@ -768,7 +756,7 @@
       "calories": 2,
       "protein": 0.1,
       "servingNote": "single shot ~30ml",
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "espresso-double",
@@ -776,7 +764,7 @@
       "calories": 4,
       "protein": 0.2,
       "servingNote": "double shot ~60ml — separate quick button",
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "id": "cortado",
@@ -784,7 +772,7 @@
       "calories": 48,
       "protein": 2.5,
       "servingNote": "estimate, ~120ml",
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     },
     {
       "name": "Gin & Tonic",
@@ -799,7 +787,7 @@
       "calories": 220,
       "protein": 0,
       "servingNote": "estimate, standard serve",
-      "updatedAt": "2026-07-07T09:16:26.944Z"
+      "updatedAt": "2026-07-24T12:56:22.729Z"
     }
   ],
   "logEntries": [
