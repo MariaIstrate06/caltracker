@@ -1111,6 +1111,31 @@
       "computedProtein": 37,
       "id": "1d3da1b7-3cf6-41db-bebe-b7a01c45de2c",
       "updatedAt": "2026-07-24T20:05:41.230Z"
+    },
+    {
+      "profileId": "da43035c-935b-4b52-82f1-85c6a6d377ef",
+      "date": "2026-07-24",
+      "type": "meal",
+      "refId": "chicken-fries-tomato-salad",
+      "itemsOverride": [
+        {
+          "ingredientId": "chicken-breast-raw",
+          "amountGrams": 170
+        },
+        {
+          "ingredientId": "frozen-fries-baked",
+          "amountGrams": 150
+        },
+        {
+          "ingredientId": "tomato",
+          "amountGrams": 200
+        }
+      ],
+      "timestamp": "2026-07-24T20:05:55.076Z",
+      "computedCalories": 496.5,
+      "computedProtein": 57.49999999999999,
+      "id": "67d14b1b-0062-43d0-a560-049895a1112a",
+      "updatedAt": "2026-07-24T20:05:55.076Z"
     }
   ],
   "tombstones": {
