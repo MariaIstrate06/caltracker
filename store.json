@@ -328,6 +328,13 @@
       "proteinPer100g": 0,
       "id": "11eeac37-e761-48bb-ab8e-3a45017a7b90",
       "updatedAt": "2026-07-24T20:05:39.719Z"
+    },
+    {
+      "name": "Cereal",
+      "caloriesPer100g": 451,
+      "proteinPer100g": 10,
+      "id": "a2eb9d32-170b-4023-8be5-06dc85055da3",
+      "updatedAt": "2026-07-29T07:29:28.487Z"
     }
   ],
   "meals": [
