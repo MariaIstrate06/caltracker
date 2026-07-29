@@ -1143,6 +1143,28 @@
       "computedProtein": 57.49999999999999,
       "id": "67d14b1b-0062-43d0-a560-049895a1112a",
       "updatedAt": "2026-07-24T20:05:55.076Z"
+    },
+    {
+      "profileId": "da43035c-935b-4b52-82f1-85c6a6d377ef",
+      "date": "2026-07-29",
+      "type": "meal",
+      "refId": null,
+      "name": "Milk & Cereal",
+      "itemsOverride": [
+        {
+          "ingredientId": "milk-whole",
+          "amountGrams": 100
+        },
+        {
+          "ingredientId": "a2eb9d32-170b-4023-8be5-06dc85055da3",
+          "amountGrams": 81
+        }
+      ],
+      "timestamp": "2026-07-29T07:29:40.525Z",
+      "computedCalories": 426.31,
+      "computedProtein": 11.3,
+      "id": "44b11a3f-852f-4eb9-a640-ccafcb0ece97",
+      "updatedAt": "2026-07-29T07:29:40.525Z"
     }
   ],
   "tombstones": {
