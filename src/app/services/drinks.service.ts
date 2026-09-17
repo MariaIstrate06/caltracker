@@ -1,59 +1,25 @@
 import { Injectable } from '@angular/core';
 import { Drink } from '../models';
-import { STORAGE_KEYS } from './storage-keys';
-import { StorageService } from './storage.service';
-
-const STORAGE_KEY = STORAGE_KEYS.drinks;
+import { SupabaseRepository } from './supabase-repository.base';
 
 @Injectable({ providedIn: 'root' })
-export class DrinksService {
-  constructor(private storage: StorageService) {}
+export class DrinksService extends SupabaseRepository<Drink> {
+  protected readonly table = 'drinks';
 
-  getAll(): Drink[] {
-    return this.storage.get<Drink[]>(STORAGE_KEY) ?? [];
-  }
-
-  getById(id: string): Drink | undefined {
-    return this.getAll().find((drink) => drink.id === id);
-  }
-
-  create(input: Omit<Drink, 'id' | 'updatedAt'>): Drink {
-    const drink: Drink = {
-      ...input,
-      id: crypto.randomUUID(),
-      updatedAt: new Date().toISOString(),
+  protected mapFromRow(row: Record<string, any>): Drink {
+    return {
+      id: row['id'],
+      name: row['name'],
+      calories: Number(row['calories']),
+      protein: Number(row['protein']),
     };
-    this.saveAll([...this.getAll(), drink]);
-    return drink;
   }
 
-  update(id: string, patch: Partial<Omit<Drink, 'id'>>): Drink | undefined {
-    let updated: Drink | undefined;
-    const all = this.getAll().map((drink) => {
-      if (drink.id !== id) {
-        return drink;
-      }
-      updated = { ...drink, ...patch, id, updatedAt: new Date().toISOString() };
-      return updated;
-    });
-    if (updated) {
-      this.saveAll(all);
-    }
-    return updated;
-  }
-
-  delete(id: string): void {
-    this.saveAll(this.getAll().filter((drink) => drink.id !== id));
-  }
-
-  /** Seeds the store from `seed` only if it's currently empty; never overwrites existing data. */
-  seedIfEmpty(seed: Drink[]): void {
-    if (this.getAll().length === 0 && seed.length > 0) {
-      this.saveAll(seed);
-    }
-  }
-
-  private saveAll(drinks: Drink[]): void {
-    this.storage.set(STORAGE_KEY, drinks);
+  protected mapToRow(input: Record<string, any>): Record<string, any> {
+    const row: Record<string, any> = {};
+    if (input['name'] !== undefined) row['name'] = input['name'];
+    if (input['calories'] !== undefined) row['calories'] = input['calories'];
+    if (input['protein'] !== undefined) row['protein'] = input['protein'];
+    return row;
   }
 }

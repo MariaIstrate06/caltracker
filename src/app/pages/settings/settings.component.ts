@@ -1,10 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Profile } from '../../models';
-import { GithubTokenService } from '../../services/github-token.service';
+import { Router } from '@angular/router';
+import { Drink, Profile, Snack, Theme } from '../../models';
+import { AuthService } from '../../services/auth.service';
+import { DrinksService } from '../../services/drinks.service';
 import { ProfilesService } from '../../services/profiles.service';
-import { SyncService } from '../../services/sync.service';
+import { SnacksService } from '../../services/snacks.service';
+import { ThemeService } from '../../services/theme.service';
 
 @Component({
   selector: 'app-settings',
@@ -13,157 +16,181 @@ import { SyncService } from '../../services/sync.service';
   template: `
     <h2>Settings</h2>
 
-    <div class="card">
-      <h3>GitHub sync</h3>
-      <p class="muted" *ngIf="sync.status$ | async as status">
-        Status: <strong [style.color]="'var(--text)'">{{ status.state }}</strong>
-        <span *ngIf="status.lastSyncedAt"> · last synced {{ status.lastSyncedAt | date: 'medium' }}</span>
-        <br *ngIf="status.error" />
-        <span *ngIf="status.error">{{ status.error }}</span>
-      </p>
+    <div class="card" *ngIf="profile as p">
+      <h3>Display name</h3>
+      <div class="btn-row">
+        <input class="search-input" style="margin-bottom: 0; flex: 1" placeholder="Name" [(ngModel)]="p.name" (change)="saveDisplayName()" />
+        <span class="field"><input [(ngModel)]="p.emoji" (change)="saveDisplayName()" size="3" /></span>
+      </div>
+    </div>
 
-      <ng-container *ngIf="!hasToken">
-        <input
-          type="password"
-          class="search-input"
-          placeholder="GitHub personal access token (repo contents read/write)"
-          [(ngModel)]="tokenInput"
-        />
-        <button class="btn btn-primary btn-small" (click)="connect()">Connect</button>
-      </ng-container>
-      <div class="btn-row" *ngIf="hasToken">
-        <button class="btn btn-small" (click)="sync.retryNow()">Sync now</button>
-        <button class="btn btn-small btn-danger" (click)="disconnect()">Disconnect</button>
+    <div class="card" *ngIf="profile as p">
+      <h3>My goals</h3>
+      <div class="btn-row">
+        <span class="field">cal goal <input type="number" [(ngModel)]="p.dailyCalorieGoal" /></span>
+        <span class="field">protein goal <input type="number" [(ngModel)]="p.dailyProteinGoal" /></span>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary btn-small" (click)="saveGoals()">Save</button>
+        <span class="muted" *ngIf="goalsSaved">Saved ✓</span>
+      </div>
+    </div>
+
+    <div class="card" *ngIf="profile as p">
+      <h3>Theme</h3>
+      <div class="btn-row">
+        <button class="btn btn-small" [class.btn-primary]="p.theme === 'green'" (click)="setTheme('green')">Green</button>
+        <button class="btn btn-small" [class.btn-primary]="p.theme === 'pink'" (click)="setTheme('pink')">Pink</button>
+      </div>
+    </div>
+
+    <div class="card" *ngIf="profile as p">
+      <h3>Home screen — available items</h3>
+      <p class="muted">Pick which drinks and snacks show on Home's "Drinks & snacks available" card, then save.</p>
+
+      <h4>Drinks</h4>
+      <div class="checkbox-list">
+        <label class="checkbox-row" *ngFor="let drink of drinks">
+          <input type="checkbox" [checked]="isFeaturedDrink(drink.id)" (change)="toggleFeaturedDrink(drink.id)" />
+          {{ drink.name }}
+        </label>
+        <p class="muted" *ngIf="!drinks.length">No drinks in the library yet.</p>
+      </div>
+
+      <h4>Snacks</h4>
+      <div class="checkbox-list">
+        <label class="checkbox-row" *ngFor="let snack of snacks">
+          <input type="checkbox" [checked]="isFeaturedSnack(snack.id)" (change)="toggleFeaturedSnack(snack.id)" />
+          {{ snack.name }}
+        </label>
+        <p class="muted" *ngIf="!snacks.length">No snacks in the library yet.</p>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary btn-small" (click)="saveFeatured()">Save</button>
+        <span class="muted" *ngIf="featuredSaved">Saved ✓</span>
       </div>
     </div>
 
     <div class="card">
-      <h3>Profiles</h3>
-      <div class="entry-list">
-        <div class="entry-row" *ngFor="let profile of profiles">
-          <div class="entry-info" style="flex: 1; min-width: 200px">
-            <div class="btn-row" style="margin-bottom: 8px">
-              <input
-                class="search-input"
-                style="margin-bottom: 0; flex: 1"
-                [(ngModel)]="profile.name"
-                (change)="saveRename(profile)"
-              />
-              <span class="field"
-                ><input [(ngModel)]="profile.emoji" (change)="saveRename(profile)" size="3"
-              /></span>
-            </div>
-            <div class="btn-row">
-              <span class="field">cal <input type="number" [(ngModel)]="profile.dailyCalorieGoal" (change)="saveGoals(profile)" /></span>
-              <span class="field"
-                >protein <input type="number" [(ngModel)]="profile.dailyProteinGoal" (change)="saveGoals(profile)"
-              /></span>
-            </div>
-          </div>
-          <div class="btn-row">
-            <button class="btn btn-small" (click)="switchTo(profile)" [disabled]="profile.id === activeProfileId">
-              {{ profile.id === activeProfileId ? 'Active' : 'Switch' }}
-            </button>
-            <button class="btn btn-small btn-danger" (click)="remove(profile)">Delete</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <h3>Create profile</h3>
-      <div class="inline-form">
-        <input class="search-input" style="margin-bottom: 0" placeholder="Name" [(ngModel)]="newName" />
-        <div class="btn-row">
-          <span class="field">emoji <input [(ngModel)]="newEmoji" size="3" /></span>
-          <span class="field">cal goal <input type="number" [(ngModel)]="newCalorieGoal" /></span>
-          <span class="field">protein goal <input type="number" [(ngModel)]="newProteinGoal" /></span>
-        </div>
-        <button class="btn btn-primary btn-small" (click)="create()">Add profile</button>
-      </div>
+      <h3>Account</h3>
+      <p class="muted">{{ email }}</p>
+      <button class="btn btn-small btn-danger" (click)="logout()">Log out</button>
     </div>
   `,
 })
 export class SettingsComponent implements OnInit {
-  profiles: Profile[] = [];
-  activeProfileId: string | null = null;
-
-  newName = '';
-  newEmoji = '🙂';
-  newCalorieGoal = 2000;
-  newProteinGoal = 120;
-
-  hasToken = false;
-  tokenInput = '';
+  profile: Profile | null = null;
+  email = '';
+  drinks: Drink[] = [];
+  snacks: Snack[] = [];
+  goalsSaved = false;
+  featuredSaved = false;
 
   constructor(
     private profilesService: ProfilesService,
-    private tokenService: GithubTokenService,
-    public sync: SyncService
+    private auth: AuthService,
+    private themeService: ThemeService,
+    private drinksService: DrinksService,
+    private snacksService: SnacksService,
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
-  ngOnInit(): void {
-    this.refresh();
-    this.hasToken = this.tokenService.hasToken();
+  async ngOnInit(): Promise<void> {
+    this.email = this.auth.currentUser()?.email ?? '';
+    [this.profile, this.drinks, this.snacks] = await Promise.all([
+      this.profilesService.getMine(),
+      this.drinksService.getAll(),
+      this.snacksService.getAll(),
+    ]);
+    this.cdr.detectChanges();
   }
 
-  async connect(): Promise<void> {
-    if (!this.tokenInput.trim()) {
+  async saveDisplayName(): Promise<void> {
+    if (!this.profile) {
       return;
     }
-    await this.sync.connect(this.tokenInput);
-    this.tokenInput = '';
-    this.hasToken = this.tokenService.hasToken();
-    this.refresh();
+    await this.profilesService.updateMine({ name: this.profile.name, emoji: this.profile.emoji });
   }
 
-  disconnect(): void {
-    this.sync.disconnect();
-    this.hasToken = false;
-  }
-
-  create(): void {
-    if (!this.newName.trim()) {
+  async saveGoals(): Promise<void> {
+    if (!this.profile) {
       return;
     }
-    this.profilesService.create({
-      name: this.newName.trim(),
-      emoji: this.newEmoji.trim() || '🙂',
-      dailyCalorieGoal: this.newCalorieGoal,
-      dailyProteinGoal: this.newProteinGoal,
+    await this.profilesService.updateMine({
+      dailyCalorieGoal: this.profile.dailyCalorieGoal,
+      dailyProteinGoal: this.profile.dailyProteinGoal,
     });
-    this.newName = '';
-    this.newEmoji = '🙂';
-    this.newCalorieGoal = 2000;
-    this.newProteinGoal = 120;
-    this.refresh();
+    this.flashSaved('goalsSaved');
   }
 
-  saveRename(profile: Profile): void {
-    this.profilesService.update(profile.id, { name: profile.name, emoji: profile.emoji });
-    this.refresh();
+  async setTheme(theme: Theme): Promise<void> {
+    if (!this.profile) {
+      return;
+    }
+    this.profile.theme = theme;
+    this.themeService.apply(theme);
+    await this.profilesService.updateMine({ theme });
   }
 
-  saveGoals(profile: Profile): void {
-    this.profilesService.update(profile.id, {
-      dailyCalorieGoal: profile.dailyCalorieGoal,
-      dailyProteinGoal: profile.dailyProteinGoal,
+  isFeaturedDrink(id: string): boolean {
+    return this.profile?.featuredDrinkIds.includes(id) ?? false;
+  }
+
+  isFeaturedSnack(id: string): boolean {
+    return this.profile?.featuredSnackIds.includes(id) ?? false;
+  }
+
+  /** Toggles are local-only until "Save" is clicked, so the DB write and its confirmation happen once, on demand. */
+  toggleFeaturedDrink(id: string): void {
+    if (!this.profile) {
+      return;
+    }
+    const set = new Set(this.profile.featuredDrinkIds);
+    if (set.has(id)) {
+      set.delete(id);
+    } else {
+      set.add(id);
+    }
+    this.profile.featuredDrinkIds = [...set];
+  }
+
+  toggleFeaturedSnack(id: string): void {
+    if (!this.profile) {
+      return;
+    }
+    const set = new Set(this.profile.featuredSnackIds);
+    if (set.has(id)) {
+      set.delete(id);
+    } else {
+      set.add(id);
+    }
+    this.profile.featuredSnackIds = [...set];
+  }
+
+  async saveFeatured(): Promise<void> {
+    if (!this.profile) {
+      return;
+    }
+    await this.profilesService.updateMine({
+      featuredDrinkIds: this.profile.featuredDrinkIds,
+      featuredSnackIds: this.profile.featuredSnackIds,
     });
-    this.refresh();
+    this.flashSaved('featuredSaved');
   }
 
-  switchTo(profile: Profile): void {
-    this.profilesService.setActiveProfileId(profile.id);
-    this.refresh();
+  async logout(): Promise<void> {
+    await this.auth.signOut();
+    this.router.navigateByUrl('/login');
   }
 
-  remove(profile: Profile): void {
-    this.profilesService.delete(profile.id);
-    this.refresh();
-  }
-
-  private refresh(): void {
-    this.profiles = this.profilesService.getAll();
-    this.activeProfileId = this.profilesService.getActiveProfileId();
+  private flashSaved(flag: 'goalsSaved' | 'featuredSaved'): void {
+    this[flag] = true;
+    this.cdr.detectChanges();
+    setTimeout(() => {
+      this[flag] = false;
+      this.cdr.detectChanges();
+    }, 1800);
   }
 }

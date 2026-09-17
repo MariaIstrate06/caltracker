@@ -8,18 +8,26 @@ export interface MacroTotals {
   protein: number;
 }
 
-const ZERO_TOTALS: MacroTotals = { calories: 0, protein: 0 };
+/** Meals are ingredient-composed, so their live totals can additionally show carbs/fibre — unlike
+ *  drinks/snacks (flat calories+protein only) and logged entries (which snapshot calories+protein only). */
+export interface MealMacroTotals extends MacroTotals {
+  carbs: number;
+  fibre: number;
+}
 
-/** Computes total calories/protein for a meal, using itemsOverride instead of meal.items when provided. */
+const ZERO_TOTALS: MacroTotals = { calories: 0, protein: 0 };
+const ZERO_MEAL_TOTALS: MealMacroTotals = { calories: 0, protein: 0, carbs: 0, fibre: 0 };
+
+/** Computes total calories/protein/carbs/fibre for a meal, using itemsOverride instead of meal.items when provided. */
 export function computeMealTotals(
   meal: Pick<Meal, 'items'>,
   ingredients: Ingredient[],
   itemsOverride?: MealItem[]
-): MacroTotals {
+): MealMacroTotals {
   const items = itemsOverride ?? meal.items;
   const ingredientsById = new Map(ingredients.map((ingredient) => [ingredient.id, ingredient]));
 
-  return items.reduce<MacroTotals>((totals, item) => {
+  return items.reduce<MealMacroTotals>((totals, item) => {
     const ingredient = ingredientsById.get(item.ingredientId);
     if (!ingredient) {
       return totals;
@@ -28,8 +36,10 @@ export function computeMealTotals(
     return {
       calories: totals.calories + ingredient.caloriesPer100g * factor,
       protein: totals.protein + ingredient.proteinPer100g * factor,
+      carbs: totals.carbs + ingredient.carbsPer100g * factor,
+      fibre: totals.fibre + ingredient.fibrePer100g * factor,
     };
-  }, ZERO_TOTALS);
+  }, ZERO_MEAL_TOTALS);
 }
 
 /** Computes total calories/protein for `quantity` servings of a drink. */
