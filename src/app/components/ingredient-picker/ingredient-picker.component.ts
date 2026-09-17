@@ -39,10 +39,16 @@ import { IngredientFormComponent } from '../ingredient-form/ingredient-form.comp
     </div>
     <p *ngIf="searchQuery && !filteredIngredients.length" class="muted">No matches for "{{ searchQuery }}".</p>
 
-    <!-- @defer so the barcode-scanning library only downloads when someone actually taps
-         "Scan ingredient", instead of bloating every page that happens to include this picker. -->
-    @defer (when scanning) {
-      <app-barcode-scanner (scanned)="onBarcodeScanned($event)" (cancelled)="scanning = false" />
+    <!-- @if controls actually showing/hiding the scanner (a bare "@defer (when scanning)" only
+         ever triggers once — it doesn't hide again when scanning flips back to false, which is
+         why the ✕ previously didn't close anything). @defer inside it still keeps the
+         barcode-scanning library out of every page that merely includes this picker. -->
+    @if (scanning) {
+      @defer (on immediate) {
+        <app-barcode-scanner (scanned)="onBarcodeScanned($event)" (cancelled)="scanning = false" />
+      } @loading {
+        <div class="confirm-overlay"><div class="scanner-box"><p class="muted">Loading camera…</p></div></div>
+      }
     }
 
     <p class="muted" *ngIf="scanNotice">{{ scanNotice }}</p>

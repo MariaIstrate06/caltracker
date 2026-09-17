@@ -1,14 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
 /** Sign-in only — no signup form. Accounts are provisioned via the Supabase Dashboard invite flow. */
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   template: `
     <div class="login-shell">
       <h2>🥗 CalTrack</h2>
@@ -36,6 +36,10 @@ import { AuthService } from '../../services/auth.service';
       </button>
 
       <p class="login-error" *ngIf="error">{{ error }}</p>
+
+      <p class="muted" style="margin-top: 14px">
+        <a routerLink="/forgot-password">Forgot password?</a>
+      </p>
     </div>
   `,
 })
@@ -47,7 +51,8 @@ export class LoginComponent {
 
   constructor(
     private auth: AuthService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   async submit(): Promise<void> {
@@ -56,12 +61,18 @@ export class LoginComponent {
     }
     this.submitting = true;
     this.error = null;
-    const { error } = await this.auth.signIn(this.email.trim(), this.password);
-    this.submitting = false;
-    if (error) {
-      this.error = error;
-      return;
+    try {
+      const { error } = await this.auth.signIn(this.email.trim(), this.password);
+      if (error) {
+        this.error = error;
+        return;
+      }
+      this.router.navigateByUrl('/home');
+    } finally {
+      // Guaranteed to run even if signIn threw instead of resolving with an error, so the
+      // button never gets stuck on "Signing in…" with no explanation.
+      this.submitting = false;
+      this.cdr.detectChanges();
     }
-    this.router.navigateByUrl('/home');
   }
 }

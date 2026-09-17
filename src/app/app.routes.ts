@@ -4,6 +4,10 @@ import { authGuard, sessionGuard } from './guards/auth.guard';
 export const routes: Routes = [
   { path: 'login', loadComponent: () => import('./pages/login/login.component').then((m) => m.LoginComponent) },
   {
+    path: 'forgot-password',
+    loadComponent: () => import('./pages/forgot-password/forgot-password.component').then((m) => m.ForgotPasswordComponent),
+  },
+  {
     path: 'set-password',
     canActivate: [sessionGuard],
     loadComponent: () => import('./pages/set-password/set-password.component').then((m) => m.SetPasswordComponent),
