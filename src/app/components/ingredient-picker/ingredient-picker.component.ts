@@ -1,12 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Ingredient, MealItem } from '../../models';
 import { IngredientsService } from '../../services/ingredients.service';
-import { OpenFoodFactsService, ScannedProduct } from '../../services/open-food-facts.service';
 import { deletedEntityLabel } from '../../utils/deleted-entity.util';
 import { computeMealTotals, MealMacroTotals } from '../../utils/macro-calc.util';
-import { BarcodeScannerComponent } from '../barcode-scanner/barcode-scanner.component';
 import { IngredientFormComponent } from '../ingredient-form/ingredient-form.component';
 
 /**
@@ -14,15 +12,16 @@ import { IngredientFormComponent } from '../ingredient-form/ingredient-form.comp
  * Shared by every place a meal's ingredient list is authored: the Log a meal flow and the
  * Meal Editor (create/duplicate/edit).
  *
- * The trailing search-bar button is "Scan ingredient" by default (opens the barcode scanner),
- * and switches to "+ Add new ingredient" (plain manual entry) only once the user has typed a
- * query that matches nothing in the library — at that point scanning isn't the likely next step,
- * typing the rest of a new ingredient by hand is.
+ * The trailing search-bar button is "Scan ingredient" by default, and switches to "+ Add new
+ * ingredient" only once typing has ruled out every existing match — either way it just opens
+ * IngredientFormComponent, telling it whether to jump straight into the scanner or not; the
+ * form itself owns the actual scanning/prefill logic so it works the same everywhere that form
+ * is used (Manage's direct "+ Add ingredient" included), not just from here.
  */
 @Component({
   selector: 'app-ingredient-picker',
   standalone: true,
-  imports: [CommonModule, FormsModule, IngredientFormComponent, BarcodeScannerComponent],
+  imports: [CommonModule, FormsModule, IngredientFormComponent],
   template: `
     <div class="search-bar">
       <input class="search-input" placeholder="Search ingredients…" [(ngModel)]="searchQuery" />
@@ -39,20 +38,12 @@ import { IngredientFormComponent } from '../ingredient-form/ingredient-form.comp
     </div>
     <p *ngIf="searchQuery && !filteredIngredients.length" class="muted">No matches for "{{ searchQuery }}".</p>
 
-    <!-- @if controls actually showing/hiding the scanner (a bare "@defer (when scanning)" only
-         ever triggers once — it doesn't hide again when scanning flips back to false, which is
-         why the ✕ previously didn't close anything). @defer inside it still keeps the
-         barcode-scanning library out of every page that merely includes this picker. -->
-    @if (scanning) {
-      @defer (on immediate) {
-        <app-barcode-scanner (scanned)="onBarcodeScanned($event)" (cancelled)="scanning = false" />
-      } @loading {
-        <div class="confirm-overlay"><div class="scanner-box"><p class="muted">Loading camera…</p></div></div>
-      }
-    }
-
-    <p class="muted" *ngIf="scanNotice">{{ scanNotice }}</p>
-    <app-ingredient-form *ngIf="showAddForm" [initial]="scannedPrefill" (saved)="onIngredientCreated($event)" (cancelled)="closeAddForm()" />
+    <app-ingredient-form
+      *ngIf="showAddForm"
+      [autoOpenScanner]="autoOpenScannerForForm"
+      (saved)="onIngredientCreated($event)"
+      (cancelled)="showAddForm = false"
+    />
 
     <ng-container *ngIf="items.length">
       <h3>Ingredients</h3>
@@ -84,15 +75,9 @@ export class IngredientPickerComponent implements OnInit {
 
   searchQuery = '';
   showAddForm = false;
-  scanning = false;
-  scanNotice: string | null = null;
-  scannedPrefill: ScannedProduct | null = null;
+  autoOpenScannerForForm = false;
 
-  constructor(
-    private ingredientsService: IngredientsService,
-    private openFoodFacts: OpenFoodFactsService,
-    private cdr: ChangeDetectorRef
-  ) {}
+  constructor(private ingredientsService: IngredientsService) {}
 
   ngOnInit(): void {
     void this.ingredientsService.getAll();
@@ -129,40 +114,8 @@ export class IngredientPickerComponent implements OnInit {
   }
 
   onActionClick(): void {
-    if (this.actionLabel.includes('Add new')) {
-      this.scannedPrefill = null;
-      this.scanNotice = null;
-      this.showAddForm = true;
-    } else {
-      this.scanNotice = null;
-      this.scanning = true;
-    }
-  }
-
-  async onBarcodeScanned(barcode: string): Promise<void> {
-    this.scanning = false;
-    try {
-      const product = await this.openFoodFacts.lookupByBarcode(barcode);
-      if (!product) {
-        this.scanNotice = `No product found for barcode ${barcode} — enter it manually below.`;
-        this.scannedPrefill = null;
-      } else {
-        this.scanNotice = null;
-        this.scannedPrefill = product;
-      }
-    } catch (error) {
-      console.error('Barcode lookup failed', error);
-      this.scanNotice = 'Could not look up that barcode — enter the ingredient manually below.';
-      this.scannedPrefill = null;
-    }
+    this.autoOpenScannerForForm = !this.actionLabel.includes('Add new');
     this.showAddForm = true;
-    this.cdr.detectChanges();
-  }
-
-  closeAddForm(): void {
-    this.showAddForm = false;
-    this.scannedPrefill = null;
-    this.scanNotice = null;
   }
 
   addRow(ingredient: Ingredient): void {
@@ -178,7 +131,7 @@ export class IngredientPickerComponent implements OnInit {
 
   onIngredientCreated(ingredient: Ingredient): void {
     this.addRow(ingredient);
-    this.closeAddForm();
+    this.showAddForm = false;
   }
 
   emitItems(): void {
