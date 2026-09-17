@@ -6,9 +6,12 @@ export interface ScannedProduct {
   proteinPer100g: number;
   carbsPer100g: number;
   fibrePer100g: number;
+  /** Per-serving values, when Open Food Facts has them — more appropriate for a flat "one item" trackable like a drink or snack than the per-100g figures. Null when the product has no serving-size data. */
+  caloriesPerServing: number | null;
+  proteinPerServing: number | null;
 }
 
-/** Free, keyless product database (openfoodfacts.org) used to fill in an ingredient's macros from a scanned barcode. */
+/** Free, keyless product database (openfoodfacts.org) used to fill in macros from a scanned barcode. */
 @Injectable({ providedIn: 'root' })
 export class OpenFoodFactsService {
   async lookupByBarcode(barcode: string): Promise<ScannedProduct | null> {
@@ -27,12 +30,16 @@ export class OpenFoodFactsService {
     if (!name) {
       return null;
     }
+    const caloriesPerServing = nutriments['energy-kcal_serving'];
+    const proteinPerServing = nutriments['proteins_serving'];
     return {
       name,
       caloriesPer100g: Number(nutriments['energy-kcal_100g'] ?? 0),
       proteinPer100g: Number(nutriments['proteins_100g'] ?? 0),
       carbsPer100g: Number(nutriments['carbohydrates_100g'] ?? 0),
       fibrePer100g: Number(nutriments['fiber_100g'] ?? 0),
+      caloriesPerServing: caloriesPerServing !== undefined ? Number(caloriesPerServing) : null,
+      proteinPerServing: proteinPerServing !== undefined ? Number(proteinPerServing) : null,
     };
   }
 }

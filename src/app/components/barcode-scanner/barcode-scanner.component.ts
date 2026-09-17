@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, EventEmitter, OnDestroy, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, OnDestroy, Output, ViewChild } from '@angular/core';
 import { BrowserMultiFormatReader } from '@zxing/browser';
 
 /**
@@ -48,6 +48,8 @@ export class BarcodeScannerComponent implements AfterViewInit, OnDestroy {
   private stream: MediaStream | null = null;
   private readonly reader = new BrowserMultiFormatReader();
 
+  constructor(private cdr: ChangeDetectorRef) {}
+
   async ngAfterViewInit(): Promise<void> {
     try {
       this.stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' } } });
@@ -58,6 +60,11 @@ export class BarcodeScannerComponent implements AfterViewInit, OnDestroy {
     } catch (error) {
       console.error('Failed to start the camera', error);
       this.error = 'Could not access the camera. Check camera permissions and try again.';
+    } finally {
+      // Same zone gap as everywhere else in this app: getUserMedia/video.play() resolving
+      // doesn't reliably trigger Angular's own change detection, which is exactly why
+      // Capture stayed disabled forever instead of enabling once the camera was ready.
+      this.cdr.detectChanges();
     }
   }
 
@@ -80,6 +87,7 @@ export class BarcodeScannerComponent implements AfterViewInit, OnDestroy {
       this.error = "Couldn't read a barcode in that shot — line it up and try again.";
     } finally {
       this.decoding = false;
+      this.cdr.detectChanges();
     }
   }
 
