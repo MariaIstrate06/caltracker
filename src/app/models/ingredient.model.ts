@@ -3,5 +3,6 @@ export interface Ingredient {
   name: string;
   caloriesPer100g: number;
   proteinPer100g: number;
-  updatedAt: string;
+  carbsPer100g: number;
+  fibrePer100g: number;
 }

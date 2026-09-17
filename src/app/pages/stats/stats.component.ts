@@ -1,9 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { BarChartComponent, ChartBar } from '../../components/bar-chart/bar-chart.component';
 import { CountUpDirective } from '../../components/count-up.directive';
-import { DailyLogEntry, Profile } from '../../models';
+import { DailyLogEntry } from '../../models';
 import { LogService } from '../../services/log.service';
 import { ProfilesService } from '../../services/profiles.service';
 import {
@@ -24,90 +23,83 @@ const TREND_DAYS = 28;
 @Component({
   selector: 'app-stats',
   standalone: true,
-  imports: [CommonModule, RouterLink, BarChartComponent, CountUpDirective],
+  imports: [CommonModule, BarChartComponent, CountUpDirective],
   template: `
     <h2>Stats</h2>
 
-    <div *ngIf="!activeProfile" class="empty-state">
-      No active profile yet. <a routerLink="/settings">Go to Settings</a> to create one.
+    <div class="stats-row">
+      <div class="stat">
+        <div class="stat-value numeric" [appCountUp]="streaks.current">0</div>
+        <div class="stat-label">day streak</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value numeric" [appCountUp]="streaks.best">0</div>
+        <div class="stat-label">best streak</div>
+      </div>
     </div>
 
-    <ng-container *ngIf="activeProfile as profile">
+    <div class="card">
+      <div class="day-nav">
+        <button class="btn btn-small" (click)="prevWeek()">←</button>
+        <strong>{{ weekLabel }}</strong>
+        <button class="btn btn-small" (click)="nextWeek()" [disabled]="isCurrentWeek">→</button>
+      </div>
       <div class="stats-row">
         <div class="stat">
-          <div class="stat-value numeric" [appCountUp]="streaks.current">0</div>
-          <div class="stat-label">day streak</div>
+          <div class="stat-value numeric" [appCountUp]="weekAverage.avgCalories">0</div>
+          <div class="stat-label">avg kcal/day</div>
         </div>
         <div class="stat">
-          <div class="stat-value numeric" [appCountUp]="streaks.best">0</div>
-          <div class="stat-label">best streak</div>
+          <div class="stat-value numeric" [appCountUp]="weekAverage.avgProtein" [countUpDecimals]="1">0</div>
+          <div class="stat-label">avg protein/day</div>
         </div>
       </div>
+      <p class="muted" *ngIf="weekAverage.daysLogged === 0">No days logged yet this week.</p>
+    </div>
 
-      <div class="card">
-        <div class="day-nav">
-          <button class="btn btn-small" (click)="prevWeek()">←</button>
-          <strong>{{ weekLabel }}</strong>
-          <button class="btn btn-small" (click)="nextWeek()" [disabled]="isCurrentWeek">→</button>
-        </div>
-        <div class="stats-row">
-          <div class="stat">
-            <div class="stat-value numeric" [appCountUp]="weekAverage.avgCalories">0</div>
-            <div class="stat-label">avg kcal/day</div>
+    <div class="card">
+      <div class="day-nav">
+        <button class="btn btn-small" (click)="prevMonth()">←</button>
+        <strong>{{ monthLabel }}</strong>
+        <button class="btn btn-small" (click)="nextMonth()" [disabled]="isCurrentMonth">→</button>
+      </div>
+
+      <div class="calendar-grid">
+        <div class="calendar-weekday" *ngFor="let label of weekdayLabels">{{ label }}</div>
+        <ng-container *ngFor="let week of monthGrid">
+          <div
+            class="calendar-day"
+            *ngFor="let date of week"
+            [class.calendar-day-outside]="!isInMonth(date)"
+            [class.calendar-day-good]="statusFor(date).hasData && !statusFor(date).isOverGoal"
+            [class.calendar-day-over]="statusFor(date).isOverGoal"
+            [class.calendar-day-none]="!statusFor(date).hasData"
+            [title]="dayTooltip(date)"
+          >
+            {{ dayOfMonth(date) }}
           </div>
-          <div class="stat">
-            <div class="stat-value numeric" [appCountUp]="weekAverage.avgProtein" [countUpDecimals]="1">0</div>
-            <div class="stat-label">avg protein/day</div>
-          </div>
-        </div>
-        <p class="muted" *ngIf="weekAverage.daysLogged === 0">No days logged yet this week.</p>
+        </ng-container>
       </div>
 
-      <div class="card">
-        <div class="day-nav">
-          <button class="btn btn-small" (click)="prevMonth()">←</button>
-          <strong>{{ monthLabel }}</strong>
-          <button class="btn btn-small" (click)="nextMonth()" [disabled]="isCurrentMonth">→</button>
-        </div>
-
-        <div class="calendar-grid">
-          <div class="calendar-weekday" *ngFor="let label of weekdayLabels">{{ label }}</div>
-          <ng-container *ngFor="let week of monthGrid">
-            <div
-              class="calendar-day"
-              *ngFor="let date of week"
-              [class.calendar-day-outside]="!isInMonth(date)"
-              [class.calendar-day-good]="statusFor(date).hasData && !statusFor(date).isOverGoal"
-              [class.calendar-day-over]="statusFor(date).isOverGoal"
-              [class.calendar-day-none]="!statusFor(date).hasData"
-              [title]="dayTooltip(date)"
-            >
-              {{ dayOfMonth(date) }}
-            </div>
-          </ng-container>
-        </div>
-
-        <div class="legend-row">
-          <span class="legend-dot legend-good"></span>Under goal
-          <span class="legend-dot legend-over"></span>Over goal
-          <span class="legend-dot legend-none"></span>No data
-        </div>
+      <div class="legend-row">
+        <span class="legend-dot legend-good"></span>Under goal
+        <span class="legend-dot legend-over"></span>Over goal
+        <span class="legend-dot legend-none"></span>No data
       </div>
+    </div>
 
-      <div class="card">
-        <h3>Calories · last {{ trendDays }} days</h3>
-        <app-bar-chart [bars]="trendCalorieBars" [goalLine]="profile.dailyCalorieGoal" />
-      </div>
+    <div class="card">
+      <h3>Calories · last {{ trendDays }} days</h3>
+      <app-bar-chart [bars]="trendCalorieBars" [goalLine]="dailyCalorieGoal" />
+    </div>
 
-      <div class="card">
-        <h3>Protein · last {{ trendDays }} days</h3>
-        <app-bar-chart [bars]="trendProteinBars" [goalLine]="profile.dailyProteinGoal" />
-      </div>
-    </ng-container>
+    <div class="card">
+      <h3>Protein · last {{ trendDays }} days</h3>
+      <app-bar-chart [bars]="trendProteinBars" [goalLine]="dailyProteinGoal" />
+    </div>
   `,
 })
 export class StatsComponent implements OnInit {
-  activeProfile: Profile | null = null;
   weekdayLabels = WEEKDAY_LABELS;
   trendDays = TREND_DAYS;
 
@@ -123,24 +115,23 @@ export class StatsComponent implements OnInit {
   trendCalorieBars: ChartBar[] = [];
   trendProteinBars: ChartBar[] = [];
 
+  dailyCalorieGoal = 0;
+  dailyProteinGoal = 0;
+
   private allEntries: DailyLogEntry[] = [];
-  private calorieGoal = 0;
   private dayStatusCache = new Map<string, DayStat>();
 
   constructor(
     private profilesService: ProfilesService,
-    private logService: LogService
+    private logService: LogService,
+    private cdr: ChangeDetectorRef
   ) {}
 
-  ngOnInit(): void {
-    const profile = this.profilesService.getActiveProfile();
-    this.activeProfile = profile ?? null;
-    if (!profile) {
-      return;
-    }
-
-    this.allEntries = this.logService.getForProfile(profile.id);
-    this.calorieGoal = profile.dailyCalorieGoal;
+  async ngOnInit(): Promise<void> {
+    const [profile, entries] = await Promise.all([this.profilesService.getMine(), this.logService.getAll()]);
+    this.dailyCalorieGoal = profile.dailyCalorieGoal;
+    this.dailyProteinGoal = profile.dailyProteinGoal;
+    this.allEntries = entries;
 
     const [year, month] = this.today.split('-').map(Number);
     this.monthYear = year;
@@ -148,8 +139,9 @@ export class StatsComponent implements OnInit {
 
     this.refreshWeek();
     this.refreshMonth();
-    this.streaks = computeStreaks(this.allEntries, this.calorieGoal, this.today);
+    this.streaks = computeStreaks(this.allEntries, this.dailyCalorieGoal, this.today);
     this.buildTrendBars();
+    this.cdr.detectChanges();
   }
 
   get isCurrentWeek(): boolean {
@@ -224,7 +216,7 @@ export class StatsComponent implements OnInit {
   statusFor(date: string): DayStat {
     let status = this.dayStatusCache.get(date);
     if (!status) {
-      status = computeDayStats(this.allEntries, date, this.calorieGoal);
+      status = computeDayStats(this.allEntries, date, this.dailyCalorieGoal);
       this.dayStatusCache.set(date, status);
     }
     return status;

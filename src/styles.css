@@ -10,16 +10,18 @@
 
   /* Matches mariaistrate06.github.io/portfolio — near-black + terminal green */
   --bg: #171717;
-  --surface: rgba(126, 217, 87, 0.05);
-  --surface-raised: rgba(126, 217, 87, 0.088);
-  --border: rgba(126, 217, 87, 0.16);
-  --border-strong: rgba(126, 217, 87, 0.3);
+  --accent-rgb: 126, 217, 87;
+  --accent-protein-rgb: 166, 74, 201;
+  --surface: rgba(var(--accent-rgb), 0.05);
+  --surface-raised: rgba(var(--accent-rgb), 0.088);
+  --border: rgba(var(--accent-rgb), 0.16);
+  --border-strong: rgba(var(--accent-rgb), 0.3);
   --text: #f8f4ec;
   --text-muted: #9a9c8e;
 
   /* Validated palette (dataviz skill: CVD-checked against this exact --bg) */
   --accent: #7ed957; /* brand green — buttons, glow, nav, decorative */
-  --accent-deep: #22a866; /* CVD-safe deep green for small comparative fills (calendar/chart) */
+  --accent-deep: #22a866; /* CVD-safe deep green for small comparative fills (calendar/chart) — kept constant across themes, tied to goal-status meaning, not brand color */
   --accent-protein: #a64ac9; /* protein ring — adapted from the portfolio's shadow-purple */
   --status-good: var(--accent-deep); /* at/under goal */
   --status-over: #d0692e; /* over goal — warm, not punishing; validated against --accent-deep */
@@ -29,6 +31,16 @@
   font-family: var(--font-sans);
   background: var(--bg);
   color: var(--text);
+}
+
+/* Pink + baby-blue theme, toggled from Settings. Same dark --bg for legibility; only the
+   brand accent (green) and protein-ring accent (purple) swap — --accent-deep/status colors
+   stay constant since they carry goal-status meaning, not brand identity. */
+[data-theme='pink'] {
+  --accent-rgb: 255, 111, 181;
+  --accent-protein-rgb: 126, 200, 227;
+  --accent: #ff6fb5;
+  --accent-protein: #7ec8e3;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -50,8 +62,8 @@ body {
   margin: 0;
   min-height: 100vh;
   background:
-    radial-gradient(ellipse 60% 40% at 15% 0%, rgba(126, 217, 87, 0.16), transparent 60%),
-    radial-gradient(ellipse 50% 35% at 100% 10%, rgba(166, 74, 201, 0.1), transparent 60%),
+    radial-gradient(ellipse 60% 40% at 15% 0%, rgba(var(--accent-rgb), 0.16), transparent 60%),
+    radial-gradient(ellipse 50% 35% at 100% 10%, rgba(var(--accent-protein-rgb), 0.1), transparent 60%),
     radial-gradient(ellipse 60% 50% at 50% 100%, rgba(34, 168, 102, 0.09), transparent 60%), var(--bg);
   background-attachment: fixed;
   color: var(--text);
@@ -138,52 +150,11 @@ select {
 .icon-btn:hover,
 .icon-btn.active {
   border-color: var(--border-strong);
-  background: rgba(126, 217, 87, 0.14);
+  background: rgba(var(--accent-rgb), 0.14);
 }
 
 .icon-btn:active {
   transform: scale(0.92);
-}
-
-.sync-dot {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  font-size: 0.95rem;
-  background: var(--surface-raised);
-  border: 1px solid var(--border);
-  cursor: default;
-  transition: box-shadow 0.3s ease;
-}
-
-.sync-synced {
-  box-shadow: 0 0 10px 1px rgba(34, 168, 102, 0.55);
-  border-color: var(--status-good);
-}
-
-.sync-syncing {
-  box-shadow: 0 0 10px 1px rgba(126, 217, 87, 0.5);
-  border-color: var(--accent);
-  animation: pulse 1.2s ease-in-out infinite;
-}
-
-.sync-error {
-  box-shadow: 0 0 10px 1px rgba(202, 21, 21, 0.6);
-  border-color: var(--danger);
-  cursor: pointer;
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.55;
-  }
 }
 
 .page {
@@ -261,7 +232,7 @@ select {
   filter: none;
   opacity: 1;
   transform: translateY(-2px);
-  text-shadow: 0 0 12px rgba(126, 217, 87, 0.85);
+  text-shadow: 0 0 12px rgba(var(--accent-rgb), 0.85);
 }
 
 .bottom-tabs a:active {
@@ -293,8 +264,8 @@ h3 {
   box-shadow:
     0 8px 28px rgba(0, 0, 0, 0.35),
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  background-image: linear-gradient(rgba(126, 217, 87, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(126, 217, 87, 0.04) 1px, transparent 1px);
+  background-image: linear-gradient(rgba(var(--accent-rgb), 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--accent-rgb), 0.04) 1px, transparent 1px);
   background-size: 22px 22px;
 }
 
@@ -330,7 +301,7 @@ h3 {
   font-weight: 700;
   line-height: 1.1;
   color: var(--text);
-  text-shadow: 0 0 18px rgba(126, 217, 87, 0.4);
+  text-shadow: 0 0 18px rgba(var(--accent-rgb), 0.4);
 }
 
 .stat-label {
@@ -384,7 +355,7 @@ h3 {
   fill: none;
   stroke: var(--accent);
   stroke-linecap: round;
-  filter: drop-shadow(0 0 6px rgba(126, 217, 87, 0.65));
+  filter: drop-shadow(0 0 6px rgba(var(--accent-rgb), 0.65));
   transition:
     stroke-dashoffset 0.8s cubic-bezier(0.2, 0.8, 0.2, 1),
     stroke 0.3s ease;
@@ -397,7 +368,7 @@ h3 {
 
 .ring-fill-protein {
   stroke: var(--accent-protein);
-  filter: drop-shadow(0 0 6px rgba(166, 74, 201, 0.6));
+  filter: drop-shadow(0 0 6px rgba(var(--accent-protein-rgb), 0.6));
 }
 
 .rings-legend {
@@ -471,17 +442,17 @@ h3 {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--accent), #5fc93f);
+  background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 70%, white));
   border-color: var(--accent);
   color: #10140d;
-  box-shadow: 0 0 18px rgba(126, 217, 87, 0.4);
+  box-shadow: 0 0 18px rgba(var(--accent-rgb), 0.4);
 }
 
 .btn-drink {
-  background: linear-gradient(135deg, var(--accent), #5fc93f);
+  background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 70%, white));
   border-color: var(--accent);
   color: #10140d;
-  box-shadow: 0 0 18px rgba(126, 217, 87, 0.4);
+  box-shadow: 0 0 18px rgba(var(--accent-rgb), 0.4);
 }
 
 .btn-danger {
@@ -605,7 +576,54 @@ h3 {
 .inline-form input:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(126, 217, 87, 0.22);
+  box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.22);
+}
+
+/* A search input with its trailing action ("+ Add new X") merged into one control,
+   instead of a separate button sitting below the input. */
+.search-bar {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface-raised);
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+
+.search-bar .search-input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  margin-bottom: 0;
+  border-radius: 0;
+}
+
+.search-bar .search-input:focus {
+  box-shadow: none;
+}
+
+.search-bar-action {
+  flex-shrink: 0;
+  border: none;
+  border-left: 1px solid var(--border);
+  background: transparent;
+  color: var(--accent);
+  padding: 0 16px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease;
+}
+
+.search-bar-action:hover {
+  background: rgba(var(--accent-rgb), 0.12);
+}
+
+.search-bar-action:active {
+  transform: scale(0.97);
 }
 
 .result-list {
@@ -883,14 +901,68 @@ h3 {
   width: 48px;
 }
 
-/* ===== Home greeting ===== */
+/* ===== Icon picker (meal icons) ===== */
 
-.greeting-question {
-  display: block;
-  color: var(--text-muted);
-  font-size: 1rem;
-  font-weight: 500;
-  margin-top: 2px;
+.icon-picker-trigger {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 14px;
+  margin-bottom: 10px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface-raised);
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+}
+
+.icon-picker-current {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.icon-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
+  gap: 6px;
+  max-height: 220px;
+  overflow-y: auto;
+  padding: 10px;
+  margin-bottom: 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface-raised);
+}
+
+.icon-picker-option {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  background: var(--surface);
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition:
+    transform 0.12s ease,
+    border-color 0.15s ease;
+}
+
+.icon-picker-option:hover {
+  border-color: var(--border-strong);
+}
+
+.icon-picker-option:active {
+  transform: scale(0.92);
+}
+
+.icon-picker-option.selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(var(--accent-rgb), 0.35);
 }
 
 /* ===== Drinks availability grid (Home) ===== */
@@ -925,11 +997,250 @@ h3 {
   font-size: 1.35rem;
   font-weight: 700;
   color: var(--accent);
-  text-shadow: 0 0 10px rgba(126, 217, 87, 0.45);
+  text-shadow: 0 0 10px rgba(var(--accent-rgb), 0.45);
 }
 
 .drink-chip-name {
   font-size: 0.74rem;
   color: var(--text-muted);
   line-height: 1.25;
+}
+
+/* ===== Confirm dialog (replaces window.confirm) ===== */
+
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(9, 10, 8, 0.6);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.confirm-box {
+  width: 100%;
+  max-width: 360px;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.5);
+}
+
+.confirm-box p {
+  margin: 0 0 16px;
+}
+
+/* ===== Login ===== */
+
+.login-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-width: 360px;
+  margin: 15vh auto 0;
+  text-align: center;
+}
+
+.login-shell h2 {
+  margin-bottom: 4px;
+}
+
+.login-shell .muted {
+  margin-bottom: 18px;
+}
+
+.login-error {
+  color: var(--status-over);
+  font-size: 0.88rem;
+}
+
+/* ===== Meal editor ===== */
+
+.meal-editor-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.meal-editor-header h3 {
+  margin: 0;
+}
+
+/* Name takes the majority of the row, category takes the rest — keeps both visible on one
+   line without either field feeling cramped. */
+.name-category-row {
+  display: flex;
+  gap: 8px;
+}
+
+.name-category-row .name-field {
+  flex: 2.2;
+}
+
+.name-category-row .category-field {
+  flex: 1;
+}
+
+.section-divider {
+  border-top: 1px solid var(--border);
+  margin: 18px 0;
+}
+
+/* ===== Per-ingredient macro rows (Meal editor / ingredient picker) ===== */
+
+.macro-item-row {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+}
+
+.macro-item-main {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.macro-item-main .name {
+  flex: 1;
+}
+
+.macro-item-macros {
+  font-size: 0.78rem;
+}
+
+.macro-totals-bar {
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  justify-content: flex-start;
+}
+
+/* ===== Tab bar + data table (Manage / Browse) ===== */
+
+.tab-bar {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 16px;
+}
+
+.tab-bar button {
+  flex: 1;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 10px 6px;
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.tab-bar button.active {
+  color: var(--text);
+  border-bottom-color: var(--accent);
+}
+
+.table-scroll {
+  overflow-x: auto;
+  margin-bottom: 16px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.data-table th,
+.data-table td {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.data-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.data-table th {
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.data-table tbody tr.clickable {
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.data-table tbody tr.clickable:hover {
+  background: var(--surface-raised);
+}
+
+.data-table td.actions-cell {
+  text-align: right;
+}
+
+.data-table td.edit-cell {
+  white-space: normal;
+}
+
+/* ===== Barcode scanner ===== */
+
+.scanner-box {
+  width: 100%;
+  max-width: 420px;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.5);
+}
+
+.scanner-video {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 12px;
+  background: #000;
+  margin-bottom: 10px;
+}
+
+/* ===== Checkbox list (Settings — featured items) ===== */
+
+.checkbox-list {
+  display: grid;
+  gap: 4px;
+  max-height: 220px;
+  overflow-y: auto;
+  margin-bottom: 12px;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 4px;
+  cursor: pointer;
+}
+
+.checkbox-row input[type='checkbox'] {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  accent-color: var(--accent);
 }

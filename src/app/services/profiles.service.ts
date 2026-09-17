@@ -1,73 +1,52 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone, inject } from '@angular/core';
+import { SUPABASE_CLIENT } from '../core/supabase.client';
 import { Profile } from '../models';
-import { STORAGE_KEYS } from './storage-keys';
-import { StorageService } from './storage.service';
+import { AuthService } from './auth.service';
 
-const STORAGE_KEY = STORAGE_KEYS.profiles;
-const ACTIVE_PROFILE_KEY = STORAGE_KEYS.activeProfileId;
-
+/** A user has exactly one profile row (auto-created by a DB trigger on signup), so this is a singular resource, not a list. */
 @Injectable({ providedIn: 'root' })
 export class ProfilesService {
-  constructor(private storage: StorageService) {}
+  private readonly supabase = inject(SUPABASE_CLIENT);
+  private readonly auth = inject(AuthService);
+  private readonly ngZone = inject(NgZone);
 
-  getAll(): Profile[] {
-    return this.storage.get<Profile[]>(STORAGE_KEY) ?? [];
-  }
-
-  getById(id: string): Profile | undefined {
-    return this.getAll().find((profile) => profile.id === id);
-  }
-
-  create(input: Omit<Profile, 'id' | 'updatedAt'>): Profile {
-    const profile: Profile = { ...input, id: crypto.randomUUID(), updatedAt: new Date().toISOString() };
-    this.saveAll([...this.getAll(), profile]);
-    if (!this.getActiveProfileId()) {
-      this.setActiveProfileId(profile.id);
-    }
-    return profile;
-  }
-
-  rename(id: string, name: string): Profile | undefined {
-    return this.update(id, { name });
-  }
-
-  update(id: string, patch: Partial<Omit<Profile, 'id'>>): Profile | undefined {
-    let updated: Profile | undefined;
-    const all = this.getAll().map((profile) => {
-      if (profile.id !== id) {
-        return profile;
-      }
-      updated = { ...profile, ...patch, id, updatedAt: new Date().toISOString() };
-      return updated;
+  async getMine(): Promise<Profile> {
+    const userId = this.auth.requireUserId();
+    return this.ngZone.run(async () => {
+      const { data, error } = await this.supabase.from('profiles').select('*').eq('id', userId).single();
+      if (error) throw error;
+      return this.mapFromRow(data);
     });
-    if (updated) {
-      this.saveAll(all);
-    }
-    return updated;
   }
 
-  delete(id: string): void {
-    this.saveAll(this.getAll().filter((profile) => profile.id !== id));
-    if (this.getActiveProfileId() === id) {
-      const remaining = this.getAll();
-      this.setActiveProfileId(remaining[0]?.id ?? null);
-    }
+  async updateMine(patch: Partial<Omit<Profile, 'id'>>): Promise<Profile> {
+    const userId = this.auth.requireUserId();
+    const row: Record<string, any> = {};
+    if (patch.name !== undefined) row['name'] = patch.name;
+    if (patch.emoji !== undefined) row['emoji'] = patch.emoji;
+    if (patch.dailyCalorieGoal !== undefined) row['daily_calorie_goal'] = patch.dailyCalorieGoal;
+    if (patch.dailyProteinGoal !== undefined) row['daily_protein_goal'] = patch.dailyProteinGoal;
+    if (patch.theme !== undefined) row['theme'] = patch.theme;
+    if (patch.featuredDrinkIds !== undefined) row['featured_drink_ids'] = patch.featuredDrinkIds;
+    if (patch.featuredSnackIds !== undefined) row['featured_snack_ids'] = patch.featuredSnackIds;
+
+    return this.ngZone.run(async () => {
+      const { data, error } = await this.supabase.from('profiles').update(row).eq('id', userId).select().single();
+      if (error) throw error;
+      return this.mapFromRow(data);
+    });
   }
 
-  getActiveProfileId(): string | null {
-    return this.storage.get<string>(ACTIVE_PROFILE_KEY);
-  }
-
-  getActiveProfile(): Profile | undefined {
-    const id = this.getActiveProfileId();
-    return id ? this.getById(id) : undefined;
-  }
-
-  setActiveProfileId(id: string | null): void {
-    this.storage.set(ACTIVE_PROFILE_KEY, id);
-  }
-
-  private saveAll(profiles: Profile[]): void {
-    this.storage.set(STORAGE_KEY, profiles);
+  private mapFromRow(row: Record<string, any>): Profile {
+    return {
+      id: row['id'],
+      name: row['name'],
+      emoji: row['emoji'],
+      dailyCalorieGoal: Number(row['daily_calorie_goal']),
+      dailyProteinGoal: Number(row['daily_protein_goal']),
+      theme: row['theme'] === 'pink' ? 'pink' : 'green',
+      featuredDrinkIds: row['featured_drink_ids'] ?? [],
+      featuredSnackIds: row['featured_snack_ids'] ?? [],
+    };
   }
 }

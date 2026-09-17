@@ -3,5 +3,4 @@ export interface Drink {
   name: string;
   calories: number;
   protein: number;
-  updatedAt: string;
 }

@@ -1,116 +1,213 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { DrinkFormComponent } from '../../components/drink-form/drink-form.component';
 import { IngredientFormComponent } from '../../components/ingredient-form/ingredient-form.component';
-import { MealBuilderComponent } from '../../components/meal-builder/meal-builder.component';
-import { Drink, Ingredient, Meal } from '../../models';
+import { MealEditorComponent } from '../../components/meal-editor/meal-editor.component';
+import { QuickItemFormComponent } from '../../components/quick-item-form/quick-item-form.component';
+import { Drink, Ingredient, Meal, Snack } from '../../models';
+import { ConfirmService } from '../../services/confirm.service';
 import { DrinksService } from '../../services/drinks.service';
 import { IngredientsService } from '../../services/ingredients.service';
 import { MealsService } from '../../services/meals.service';
+import { SnacksService } from '../../services/snacks.service';
 import { computeMealTotals, MacroTotals } from '../../utils/macro-calc.util';
+import { DEFAULT_MEAL_ICON } from '../../utils/meal-icons.util';
 
-type Section = 'ingredients' | 'meals' | 'drinks';
+type Section = 'meals' | 'ingredients' | 'drinks' | 'snacks';
 
 @Component({
   selector: 'app-manage',
   standalone: true,
-  imports: [CommonModule, FormsModule, IngredientFormComponent, DrinkFormComponent, MealBuilderComponent],
+  imports: [CommonModule, FormsModule, IngredientFormComponent, MealEditorComponent, QuickItemFormComponent],
   template: `
     <h2>Manage</h2>
+    <p class="muted">Everything here is a shared library — edits apply for everyone. Past logs keep their historical values; only future logs use the update.</p>
 
-    <div class="btn-row" style="margin-bottom: 16px">
-      <button class="btn" [class.btn-primary]="section === 'ingredients'" (click)="section = 'ingredients'">Ingredients</button>
-      <button class="btn" [class.btn-primary]="section === 'meals'" (click)="section = 'meals'">Meals</button>
-      <button class="btn" [class.btn-primary]="section === 'drinks'" (click)="section = 'drinks'">Drinks</button>
+    <div class="tab-bar">
+      <button [class.active]="section === 'meals'" (click)="section = 'meals'">Meals</button>
+      <button [class.active]="section === 'ingredients'" (click)="section = 'ingredients'">Ingredients</button>
+      <button [class.active]="section === 'drinks'" (click)="section = 'drinks'">Drinks</button>
+      <button [class.active]="section === 'snacks'" (click)="section = 'snacks'">Snacks</button>
     </div>
-
-    <ng-container *ngIf="section === 'ingredients'">
-      <input class="search-input" placeholder="Search ingredients…" [(ngModel)]="ingredientQuery" />
-      <button class="btn btn-small" *ngIf="!addingIngredient" (click)="addingIngredient = true; editingIngredient = null">
-        + Add ingredient
-      </button>
-      <app-ingredient-form *ngIf="addingIngredient" (saved)="onIngredientSaved()" (cancelled)="addingIngredient = false" />
-
-      <div class="entry-list">
-        <div class="entry-row" *ngFor="let ingredient of filteredIngredients">
-          <ng-container *ngIf="editingIngredient?.id !== ingredient.id; else editIngredientTpl">
-            <div class="entry-info">
-              <strong>{{ ingredient.name }}</strong>
-              <small>{{ ingredient.caloriesPer100g }} kcal/100g · {{ ingredient.proteinPer100g }}g protein</small>
-            </div>
-            <div class="btn-row">
-              <button class="btn btn-small" (click)="addingIngredient = false; editingIngredient = ingredient">Edit</button>
-              <button class="btn btn-small btn-danger" (click)="deleteIngredient(ingredient)">Delete</button>
-            </div>
-          </ng-container>
-          <ng-template #editIngredientTpl>
-            <app-ingredient-form [ingredient]="ingredient" (saved)="onIngredientSaved()" (cancelled)="editingIngredient = null" />
-          </ng-template>
-        </div>
-      </div>
-      <div class="empty-state" *ngIf="!filteredIngredients.length">No ingredients match.</div>
-    </ng-container>
 
     <ng-container *ngIf="section === 'meals'">
       <ng-container *ngIf="!addingMeal && !editingMeal">
-        <input class="search-input" placeholder="Search meals…" [(ngModel)]="mealQuery" />
-        <button class="btn btn-small" (click)="addingMeal = true">+ Add meal from scratch</button>
+        <div class="search-bar">
+          <input class="search-input" placeholder="Search meals…" [(ngModel)]="mealQuery" />
+          <button type="button" class="search-bar-action" (click)="addingMeal = true">+ Add meal</button>
+        </div>
 
-        <div class="entry-list">
-          <div class="entry-row" *ngFor="let meal of filteredMeals">
-            <div class="entry-info">
-              <strong>{{ meal.name }}</strong>
-              <small>{{ meal.category }} · {{ mealTotals(meal).calories | number: '1.0-0' }} kcal</small>
-            </div>
-            <div class="btn-row">
-              <button class="btn btn-small" (click)="editingMeal = meal">Edit</button>
-              <button class="btn btn-small btn-danger" (click)="deleteMeal(meal)">Delete</button>
-            </div>
-          </div>
+        <div class="table-scroll">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Meal</th>
+                <th>Category</th>
+                <th>Calories</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let meal of filteredMeals">
+                <td>{{ meal.icon || defaultIcon }} {{ meal.name }}</td>
+                <td>{{ meal.category }}</td>
+                <td>{{ mealTotals(meal).calories | number: '1.0-0' }}</td>
+                <td class="actions-cell">
+                  <div class="btn-row">
+                    <button class="btn btn-small" (click)="editingMeal = meal">Edit</button>
+                    <button class="btn btn-small btn-danger" (click)="deleteMeal(meal)">Delete</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
         <div class="empty-state" *ngIf="!filteredMeals.length">No meals match.</div>
       </ng-container>
 
       <ng-container *ngIf="addingMeal">
-        <h3>New meal</h3>
-        <app-meal-builder mode="create" (saved)="onMealSaved()" (cancelled)="addingMeal = false" />
+        <app-meal-editor mode="create" actions="library" (saved)="onMealSaved()" (cancelled)="addingMeal = false" />
       </ng-container>
 
       <ng-container *ngIf="editingMeal as meal">
-        <h3>Edit "{{ meal.name }}"</h3>
-        <app-meal-builder [seedMeal]="meal" mode="edit" (saved)="onMealSaved()" (cancelled)="editingMeal = null" />
+        <app-meal-editor [seedMeal]="meal" mode="edit" actions="library" (saved)="onMealSaved()" (cancelled)="editingMeal = null" />
       </ng-container>
     </ng-container>
 
-    <ng-container *ngIf="section === 'drinks'">
-      <input class="search-input" placeholder="Search drinks…" [(ngModel)]="drinkQuery" />
-      <button class="btn btn-small" *ngIf="!addingDrink" (click)="addingDrink = true; editingDrink = null">+ Add drink</button>
-      <app-drink-form *ngIf="addingDrink" (saved)="onDrinkSaved()" (cancelled)="addingDrink = false" />
+    <ng-container *ngIf="section === 'ingredients'">
+      <div class="search-bar">
+        <input class="search-input" placeholder="Search ingredients…" [(ngModel)]="ingredientQuery" />
+        <button type="button" class="search-bar-action" (click)="addingIngredient = true; editingIngredient = null">+ Add ingredient</button>
+      </div>
+      <app-ingredient-form *ngIf="addingIngredient" (saved)="onIngredientSaved()" (cancelled)="addingIngredient = false" />
 
-      <div class="entry-list">
-        <div class="entry-row" *ngFor="let drink of filteredDrinks">
-          <ng-container *ngIf="editingDrink?.id !== drink.id; else editDrinkTpl">
-            <div class="entry-info">
-              <strong>{{ drink.name }}</strong>
-              <small>{{ drink.calories }} kcal · {{ drink.protein }}g protein</small>
-            </div>
-            <div class="btn-row">
-              <button class="btn btn-small" (click)="addingDrink = false; editingDrink = drink">Edit</button>
-              <button class="btn btn-small btn-danger" (click)="deleteDrink(drink)">Delete</button>
-            </div>
-          </ng-container>
-          <ng-template #editDrinkTpl>
-            <app-drink-form [drink]="drink" (saved)="onDrinkSaved()" (cancelled)="editingDrink = null" />
-          </ng-template>
-        </div>
+      <div class="table-scroll">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Ingredient</th>
+              <th>Cal/100g</th>
+              <th>Carbs/100g</th>
+              <th>Protein/100g</th>
+              <th>Fibre/100g</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let ingredient of filteredIngredients">
+              <tr *ngIf="editingIngredient?.id !== ingredient.id">
+                <td>{{ ingredient.name }}</td>
+                <td>{{ ingredient.caloriesPer100g }}</td>
+                <td>{{ ingredient.carbsPer100g }}</td>
+                <td>{{ ingredient.proteinPer100g }}</td>
+                <td>{{ ingredient.fibrePer100g }}</td>
+                <td class="actions-cell">
+                  <div class="btn-row">
+                    <button class="btn btn-small" (click)="addingIngredient = false; editingIngredient = ingredient">Edit</button>
+                    <button class="btn btn-small btn-danger" (click)="deleteIngredient(ingredient)">Delete</button>
+                  </div>
+                </td>
+              </tr>
+              <tr *ngIf="editingIngredient?.id === ingredient.id">
+                <td colspan="6" class="edit-cell">
+                  <app-ingredient-form [ingredient]="ingredient" (saved)="onIngredientSaved()" (cancelled)="editingIngredient = null" />
+                </td>
+              </tr>
+            </ng-container>
+          </tbody>
+        </table>
+      </div>
+      <div class="empty-state" *ngIf="!filteredIngredients.length">No ingredients match.</div>
+    </ng-container>
+
+    <ng-container *ngIf="section === 'drinks'">
+      <div class="search-bar">
+        <input class="search-input" placeholder="Search drinks…" [(ngModel)]="drinkQuery" />
+        <button type="button" class="search-bar-action" (click)="addingDrink = true; editingDrink = null">+ Add drink</button>
+      </div>
+      <app-quick-item-form *ngIf="addingDrink" [repo]="drinksService" itemLabel="Drink" (saved)="onDrinkSaved()" (cancelled)="addingDrink = false" />
+
+      <div class="table-scroll">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Drink</th>
+              <th>Calories</th>
+              <th>Protein</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let drink of filteredDrinks">
+              <tr *ngIf="editingDrink?.id !== drink.id">
+                <td>{{ drink.name }}</td>
+                <td>{{ drink.calories }}</td>
+                <td>{{ drink.protein }}</td>
+                <td class="actions-cell">
+                  <div class="btn-row">
+                    <button class="btn btn-small" (click)="addingDrink = false; editingDrink = drink">Edit</button>
+                    <button class="btn btn-small btn-danger" (click)="deleteDrink(drink)">Delete</button>
+                  </div>
+                </td>
+              </tr>
+              <tr *ngIf="editingDrink?.id === drink.id">
+                <td colspan="4" class="edit-cell">
+                  <app-quick-item-form [repo]="drinksService" [item]="drink" itemLabel="Drink" (saved)="onDrinkSaved()" (cancelled)="editingDrink = null" />
+                </td>
+              </tr>
+            </ng-container>
+          </tbody>
+        </table>
       </div>
       <div class="empty-state" *ngIf="!filteredDrinks.length">No drinks match.</div>
+    </ng-container>
+
+    <ng-container *ngIf="section === 'snacks'">
+      <div class="search-bar">
+        <input class="search-input" placeholder="Search snacks…" [(ngModel)]="snackQuery" />
+        <button type="button" class="search-bar-action" (click)="addingSnack = true; editingSnack = null">+ Add snack</button>
+      </div>
+      <app-quick-item-form *ngIf="addingSnack" [repo]="snacksService" itemLabel="Snack" (saved)="onSnackSaved()" (cancelled)="addingSnack = false" />
+
+      <div class="table-scroll">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Snack</th>
+              <th>Calories</th>
+              <th>Protein</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let snack of filteredSnacks">
+              <tr *ngIf="editingSnack?.id !== snack.id">
+                <td>{{ snack.name }}</td>
+                <td>{{ snack.calories }}</td>
+                <td>{{ snack.protein }}</td>
+                <td class="actions-cell">
+                  <div class="btn-row">
+                    <button class="btn btn-small" (click)="addingSnack = false; editingSnack = snack">Edit</button>
+                    <button class="btn btn-small btn-danger" (click)="deleteSnack(snack)">Delete</button>
+                  </div>
+                </td>
+              </tr>
+              <tr *ngIf="editingSnack?.id === snack.id">
+                <td colspan="4" class="edit-cell">
+                  <app-quick-item-form [repo]="snacksService" [item]="snack" itemLabel="Snack" (saved)="onSnackSaved()" (cancelled)="editingSnack = null" />
+                </td>
+              </tr>
+            </ng-container>
+          </tbody>
+        </table>
+      </div>
+      <div class="empty-state" *ngIf="!filteredSnacks.length">No snacks match.</div>
     </ng-container>
   `,
 })
 export class ManageComponent implements OnInit {
-  section: Section = 'ingredients';
+  section: Section = 'meals';
+  readonly defaultIcon = DEFAULT_MEAL_ICON;
 
   ingredients: Ingredient[] = [];
   ingredientQuery = '';
@@ -127,16 +224,28 @@ export class ManageComponent implements OnInit {
   addingDrink = false;
   editingDrink: Drink | null = null;
 
+  snacks: Snack[] = [];
+  snackQuery = '';
+  addingSnack = false;
+  editingSnack: Snack | null = null;
+
   constructor(
-    private ingredientsService: IngredientsService,
+    public ingredientsService: IngredientsService,
     private mealsService: MealsService,
-    private drinksService: DrinksService
+    public drinksService: DrinksService,
+    public snacksService: SnacksService,
+    private confirmService: ConfirmService,
+    private cdr: ChangeDetectorRef
   ) {}
 
-  ngOnInit(): void {
-    this.ingredients = this.ingredientsService.getAll();
-    this.meals = this.mealsService.getAll();
-    this.drinks = this.drinksService.getAll();
+  async ngOnInit(): Promise<void> {
+    [this.ingredients, this.meals, this.drinks, this.snacks] = await Promise.all([
+      this.ingredientsService.getAll(),
+      this.mealsService.getAll(),
+      this.drinksService.getAll(),
+      this.snacksService.getAll(),
+    ]);
+    this.cdr.detectChanges();
   }
 
   get filteredIngredients(): Ingredient[] {
@@ -151,50 +260,88 @@ export class ManageComponent implements OnInit {
     return this.filterByName(this.drinks, this.drinkQuery);
   }
 
+  get filteredSnacks(): Snack[] {
+    return this.filterByName(this.snacks, this.snackQuery);
+  }
+
   mealTotals(meal: Meal): MacroTotals {
     return computeMealTotals(meal, this.ingredients);
   }
 
-  onIngredientSaved(): void {
+  async onIngredientSaved(): Promise<void> {
     this.addingIngredient = false;
     this.editingIngredient = null;
-    this.ingredients = this.ingredientsService.getAll();
+    this.ingredients = await this.ingredientsService.getAll();
+    this.cdr.detectChanges();
   }
 
-  deleteIngredient(ingredient: Ingredient): void {
-    if (!confirm(`Delete "${ingredient.name}"? Past log entries that used it keep their historically logged values.`)) {
+  async deleteIngredient(ingredient: Ingredient): Promise<void> {
+    const confirmed = await this.confirmService.confirm(
+      `Delete "${ingredient.name}"? Past log entries that used it keep their historically logged values.`
+    );
+    if (!confirmed) {
       return;
     }
-    this.ingredientsService.delete(ingredient.id);
-    this.ingredients = this.ingredientsService.getAll();
+    await this.ingredientsService.delete(ingredient.id);
+    this.ingredients = await this.ingredientsService.getAll();
+    this.cdr.detectChanges();
   }
 
-  onMealSaved(): void {
+  async onMealSaved(): Promise<void> {
     this.addingMeal = false;
     this.editingMeal = null;
-    this.meals = this.mealsService.getAll();
+    this.meals = await this.mealsService.getAll();
+    this.cdr.detectChanges();
   }
 
-  deleteMeal(meal: Meal): void {
-    if (!confirm(`Delete "${meal.name}"? Past log entries that used it keep their historically logged values.`)) {
+  async deleteMeal(meal: Meal): Promise<void> {
+    const confirmed = await this.confirmService.confirm(
+      `Delete "${meal.name}"? Past log entries that used it keep their historically logged values.`
+    );
+    if (!confirmed) {
       return;
     }
-    this.mealsService.delete(meal.id);
-    this.meals = this.mealsService.getAll();
+    await this.mealsService.delete(meal.id);
+    this.meals = await this.mealsService.getAll();
+    this.cdr.detectChanges();
   }
 
-  onDrinkSaved(): void {
+  async onDrinkSaved(): Promise<void> {
     this.addingDrink = false;
     this.editingDrink = null;
-    this.drinks = this.drinksService.getAll();
+    this.drinks = await this.drinksService.getAll();
+    this.cdr.detectChanges();
   }
 
-  deleteDrink(drink: Drink): void {
-    if (!confirm(`Delete "${drink.name}"? Past log entries that used it keep their historically logged values.`)) {
+  async deleteDrink(drink: Drink): Promise<void> {
+    const confirmed = await this.confirmService.confirm(
+      `Delete "${drink.name}"? Past log entries that used it keep their historically logged values.`
+    );
+    if (!confirmed) {
       return;
     }
-    this.drinksService.delete(drink.id);
-    this.drinks = this.drinksService.getAll();
+    await this.drinksService.delete(drink.id);
+    this.drinks = await this.drinksService.getAll();
+    this.cdr.detectChanges();
+  }
+
+  async onSnackSaved(): Promise<void> {
+    this.addingSnack = false;
+    this.editingSnack = null;
+    this.snacks = await this.snacksService.getAll();
+    this.cdr.detectChanges();
+  }
+
+  async deleteSnack(snack: Snack): Promise<void> {
+    const confirmed = await this.confirmService.confirm(
+      `Delete "${snack.name}"? Past log entries that used it keep their historically logged values.`
+    );
+    if (!confirmed) {
+      return;
+    }
+    await this.snacksService.delete(snack.id);
+    this.snacks = await this.snacksService.getAll();
+    this.cdr.detectChanges();
   }
 
   private filterByName<T extends { name: string }>(items: T[], query: string): T[] {
